@@ -121,6 +121,42 @@ const insertStringAtIndex = (
       currentString.substring(index, currentString.length)
     : string + currentString;
 
+const hasGlsl300Version = (source: string) =>
+  /^#version\s+300\s+es\b/m.test(source.trimStart());
+
+const hasPrecisionFloat = (source: string) =>
+  /\bprecision\s+(?:lowp|mediump|highp)\s+float\s*;/i.test(source);
+
+const hasFragColorOut = (source: string) =>
+  /\bout\s+vec4\s+\w+\s*;/i.test(source);
+
+const getShaderHeaderEndIndex = (source: string) => {
+  let index = 0;
+  const versionMatch = source.match(/^\s*#version[^\n]*\n/);
+  if (versionMatch) {
+    index = versionMatch[0].length;
+  }
+
+  const rest = source.slice(index);
+  const precisionMatch = rest.match(
+    /^(?:\s*precision\s+(?:lowp|mediump|highp)\s+float\s*;\s*\n)+/
+  );
+  if (precisionMatch) {
+    index += precisionMatch[0].length;
+  }
+
+  const afterPrecision = source.slice(index);
+  const outMatch = afterPrecision.match(/^\s*out\s+vec4\s+\w+\s*;\s*\n/);
+  if (outMatch) {
+    index += outMatch[0].length;
+  }
+
+  return index;
+};
+
+const insertAfterShaderHeader = (source: string, insertion: string) =>
+  insertStringAtIndex(source, insertion, getShaderHeaderEndIndex(source));
+
 export default class ShadertoyReact extends Component<Props, *> {
   constructor(props) {
     super(props);
@@ -249,6 +285,28 @@ export default class ShadertoyReact extends Component<Props, *> {
 
     this.isWebGL2 = !!(gl && gl.createVertexArray);
     this.gl = gl;
+
+    if (!gl) {
+      if (webgl === "2") {
+        console.error(
+          SRLOG(
+            "Failed to create a WebGL2 context. Check browser support and contextAttributes."
+          )
+        );
+      } else if (webgl === "1") {
+        console.error(
+          SRLOG(
+            "Failed to create a WebGL1 context. Check browser support and contextAttributes."
+          )
+        );
+      } else {
+        console.error(
+          SRLOG(
+            "Failed to create a WebGL context. Neither WebGL2 nor WebGL1 is available."
+          )
+        );
+      }
+    }
 
     if (gl) {
       gl.getExtension("OES_standard_derivatives");
@@ -584,20 +642,37 @@ export default class ShadertoyReact extends Component<Props, *> {
         SRLOG`wrong precision type ${precision}, please make sure to pass one of a valid precision lowp, mediump, highp, by default you shader precision will be set to highp.`
       );
 
-    const fsBody = dprString.concat(fs);
-
     let fsString;
     if (this.isWebGL2) {
-      fsString = `#version 300 es\n${precisionString}out vec4 fragColor;\n${fsBody}`;
+      const fsAlreadyGlsl300 = hasGlsl300Version(fs);
+
+      if (fsAlreadyGlsl300) {
+        fsString = fs;
+        if (!hasPrecisionFloat(fsString)) {
+          fsString = insertAfterShaderHeader(fsString, precisionString);
+        }
+        if (!hasFragColorOut(fsString)) {
+          fsString = insertAfterShaderHeader(fsString, "out vec4 fragColor;\n");
+        }
+      } else {
+        fsString = `#version 300 es\n${precisionString}out vec4 fragColor;\n${fs}`;
+      }
+
+      fsString = insertAfterShaderHeader(fsString, dprString);
       fsString = fsString
         .replace(/gl_FragColor/g, "fragColor")
         .replace(/texture2D\(/g, "texture(")
         .replace(/textureCube\(/g, "texture(");
     } else {
-      fsString = precisionString.concat(fsBody).replace(/texture\(/g, "texture2D(");
+      fsString = precisionString
+        .concat(dprString)
+        .concat(fs)
+        .replace(/texture\(/g, "texture2D(");
     }
 
-    const indexOfPrecisionString = fsString.lastIndexOf(precisionString);
+    const uniformInsertIndex = this.isWebGL2
+      ? getShaderHeaderEndIndex(fsString)
+      : fsString.lastIndexOf(precisionString) + precisionString.length;
 
     Object.keys(this.uniforms).forEach((uniform: string) => {
       if (fs.includes(uniform)) {
@@ -606,7 +681,7 @@ export default class ShadertoyReact extends Component<Props, *> {
           `uniform ${this.uniforms[uniform].type} ${uniform}${
             this.uniforms[uniform].arraySize || ""
           }; \n`,
-          indexOfPrecisionString + precisionString.length
+          uniformInsertIndex
         );
         this.uniforms[uniform].isNeeded = true;
       }
@@ -620,7 +695,9 @@ export default class ShadertoyReact extends Component<Props, *> {
     }
 
     const vsString = this.isWebGL2
-      ? `#version 300 es\n${vs.replace(/attribute /g, "in ")}`
+      ? hasGlsl300Version(vs)
+        ? vs.replace(/attribute /g, "in ")
+        : `#version 300 es\n${vs.replace(/attribute /g, "in ")}`
       : vs;
 
     return {
