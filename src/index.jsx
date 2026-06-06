@@ -30,10 +30,16 @@ export {
 
 const PRECISIONS = ["lowp", "mediump", "highp"];
 
-const FS_MAIN_SHADER = `\nvoid main(void){
+const FS_MAIN_SHADER_WEBGL1 = `\nvoid main(void){
     vec4 color = vec4(0.0,0.0,0.0,1.0);
     mainImage( color, gl_FragCoord.xy );
     gl_FragColor = color;
+}`;
+
+const FS_MAIN_SHADER_WEBGL2 = `\nvoid main(void){
+    vec4 color = vec4(0.0,0.0,0.0,1.0);
+    mainImage( color, gl_FragCoord.xy );
+    fragColor = color;
 }`;
 
 const BASIC_FS =
@@ -44,7 +50,12 @@ const BASIC_FS =
     fragColor = vec4(col,1.0);
 }`;
 
-const BASIC_VS = `attribute vec3 aVertexPosition;
+const BASIC_VS_WEBGL1 = `attribute vec3 aVertexPosition;
+void main(void) {
+    gl_Position = vec4(aVertexPosition, 1.0);
+}`;
+
+const BASIC_VS_WEBGL2 = `in vec3 aVertexPosition;
 void main(void) {
     gl_Position = vec4(aVertexPosition, 1.0);
 }`;
@@ -90,6 +101,7 @@ type Props = {
   onDoneLoadingTextures?: Function,
   lerp?: number,
   devicePixelRatio?: number,
+  webgl?: "auto" | "1" | "2",
 };
 
 type Shaders = {
@@ -156,8 +168,8 @@ export default class ShadertoyReact extends Component<Props, *> {
     textures: [],
     contextAttributes: {},
     devicePixelRatio: 1,
-    vs: BASIC_VS,
     precision: "highp",
+    webgl: "auto",
   };
 
   componentDidMount = () => {
@@ -178,7 +190,8 @@ export default class ShadertoyReact extends Component<Props, *> {
 
       this.processCustomUniforms();
       this.processTextures();
-      const shaders = this.preProcessShaders(fs || BASIC_FS, vs || BASIC_VS);
+      const defaultVs = this.isWebGL2 ? BASIC_VS_WEBGL2 : BASIC_VS_WEBGL1;
+      const shaders = this.preProcessShaders(fs || BASIC_FS, vs || defaultVs);
       this.initShaders(shaders);
       this.initBuffers();
       this.drawScene();
@@ -193,7 +206,8 @@ export default class ShadertoyReact extends Component<Props, *> {
     const { gl } = this;
 
     if (gl) {
-      gl.getExtension("WEBGL_lose_context").loseContext();
+      const loseContext = gl.getExtension("WEBGL_lose_context");
+      if (loseContext) loseContext.loseContext();
 
       gl.useProgram(null);
       gl.deleteProgram(this.shaderProgram);
@@ -221,15 +235,27 @@ export default class ShadertoyReact extends Component<Props, *> {
   };
 
   initWebGL = () => {
-    const { contextAttributes } = this.props;
-    // $FlowFixMe
-    this.gl =
-      this.canvas.getContext("webgl", contextAttributes) ||
-      this.canvas.getContext("experimental-webgl", contextAttributes);
-    // $FlowFixMe
-    this.gl.getExtension("OES_standard_derivatives");
-    // $FlowFixMe
-    this.gl.getExtension("EXT_shader_texture_lod");
+    const { contextAttributes, webgl = "auto" } = this.props;
+    let gl = null;
+
+    if (webgl === "2" || webgl === "auto") {
+      gl = this.canvas.getContext("webgl2", contextAttributes);
+    }
+    if (!gl && (webgl === "1" || webgl === "auto")) {
+      gl =
+        this.canvas.getContext("webgl", contextAttributes) ||
+        this.canvas.getContext("experimental-webgl", contextAttributes);
+    }
+
+    this.isWebGL2 = !!(gl && gl.createVertexArray);
+    this.gl = gl;
+
+    if (gl) {
+      gl.getExtension("OES_standard_derivatives");
+      if (!this.isWebGL2) {
+        gl.getExtension("EXT_shader_texture_lod");
+      }
+    }
   };
 
   initBuffers = () => {
@@ -558,10 +584,18 @@ export default class ShadertoyReact extends Component<Props, *> {
         SRLOG`wrong precision type ${precision}, please make sure to pass one of a valid precision lowp, mediump, highp, by default you shader precision will be set to highp.`
       );
 
-    let fsString = precisionString
-      .concat(dprString)
-      .concat(fs)
-      .replace(/texture\(/g, "texture2D(");
+    const fsBody = dprString.concat(fs);
+
+    let fsString;
+    if (this.isWebGL2) {
+      fsString = `#version 300 es\n${precisionString}out vec4 fragColor;\n${fsBody}`;
+      fsString = fsString
+        .replace(/gl_FragColor/g, "fragColor")
+        .replace(/texture2D\(/g, "texture(")
+        .replace(/textureCube\(/g, "texture(");
+    } else {
+      fsString = precisionString.concat(fsBody).replace(/texture\(/g, "texture2D(");
+    }
 
     const indexOfPrecisionString = fsString.lastIndexOf(precisionString);
 
@@ -579,12 +613,19 @@ export default class ShadertoyReact extends Component<Props, *> {
     });
 
     const isShadertoy = /mainImage/.test(fs);
-    if (isShadertoy) fsString = fsString.concat(FS_MAIN_SHADER);
+    if (isShadertoy) {
+      fsString = fsString.concat(
+        this.isWebGL2 ? FS_MAIN_SHADER_WEBGL2 : FS_MAIN_SHADER_WEBGL1
+      );
+    }
 
-    // console.log(fsString);
+    const vsString = this.isWebGL2
+      ? `#version 300 es\n${vs.replace(/attribute /g, "in ")}`
+      : vs;
+
     return {
       fs: fsString,
-      vs,
+      vs: vsString,
     };
   };
 
@@ -708,7 +749,8 @@ export default class ShadertoyReact extends Component<Props, *> {
     this.canvas = r;
   };
 
-  gl: WebGLRenderingContext;
+  gl: WebGLRenderingContext | WebGL2RenderingContext;
+  isWebGL2: boolean = false;
   squareVerticesBuffer: WebGLBuffer;
   shaderProgram: WebGLProgram;
   vertexPositionAttribute: number;
