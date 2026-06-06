@@ -1,5 +1,5 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -28,9 +28,12 @@ module.exports = {
         'react-dom': 'react-dom'
     },
     optimization: {
-        minimizer: [new UglifyJsPlugin({
-            include: /\.min\.js$/
-        })]
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({
+                include: /\.min\.js$/,
+            }),
+        ],
     },
     devServer: {
         port: 3001
