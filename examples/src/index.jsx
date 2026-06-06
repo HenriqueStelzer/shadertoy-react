@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import styled, { createGlobalStyle, keyframes } from "styled-components";
 import ShadertoyReact from "../../src/index.jsx";
 import fs from "./shaders/fs";
@@ -113,4 +113,5 @@ class App extends Component {
   }
 }
 
-render(<App />, document.getElementById("root"));
+const root = createRoot(document.getElementById("root"));
+root.render(<App />);
