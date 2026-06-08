@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const UPSTREAM_URL = "https://github.com/mvilledieu/shadertoy-react";
-const FORK_URL = "https://github.com/HenriqueStelzer/shadertoy-react";
+const FORK_URL = "https://github.com/HenriqueStelzer/glsl-helpers-react";
 const OUTPUT_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "docs", "changelog");
 
 const repoUrlForVersion = (version) =>
@@ -145,7 +145,7 @@ function writeIndex(buckets) {
     "Commit history grouped by published npm version.",
     "",
     "- **1.x:** [mvilledieu/shadertoy-react](https://github.com/mvilledieu/shadertoy-react) (upstream)",
-    "- **2.x:** [HenriqueStelzer/shadertoy-react](https://github.com/HenriqueStelzer/shadertoy-react) fork as **glsl-helpers-react**",
+    "- **2.x:** [HenriqueStelzer/glsl-helpers-react](https://github.com/HenriqueStelzer/glsl-helpers-react)",
     "",
     "Only published npm versions are listed. Intermediate semver numbers (1.0.1, 1.0.4, 1.0.7, 1.0.9) were never published.",
     "",

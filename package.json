@@ -4,7 +4,7 @@
   "description": "React GLSL canvas component with Shadertoy-compatible uniforms, WebGL2 support, and extended texture helpers. Fork of shadertoy-react.",
   "main": "lib/glsl-helpers-react.min.js",
   "types": "lib/index.d.ts",
-  "homepage": "https://github.com/HenriqueStelzer/shadertoy-react#readme",
+  "homepage": "https://github.com/HenriqueStelzer/glsl-helpers-react#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve --mode development --config webpack.common.js",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/HenriqueStelzer/shadertoy-react"
+    "url": "https://github.com/HenriqueStelzer/glsl-helpers-react"
   },
   "author": "Henrique Stelzer de Oliveira (fork); Morgan Villedieu (original)",
   "license": "MIT",
