@@ -20,12 +20,7 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|gif|mp4|avi|m4v)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {}
-          }
-        ]
+        type: 'asset/resource',
       },
     ]
   },
