@@ -82,7 +82,7 @@ type TexturePropsType = {
   magFilter?: number,
   flipY?: number,
 };
-/* eslint-emable */
+/* eslint-enable */
 
 type Uniform = {
   type: string,
@@ -128,7 +128,7 @@ const hasPrecisionFloat = (source: string) =>
   /\bprecision\s+(?:lowp|mediump|highp)\s+float\s*;/i.test(source);
 
 const hasFragColorOut = (source: string) =>
-  /\bout\s+vec4\s+\w+\s*;/i.test(source);
+  /\bout\s+vec4\s+fragColor\s*;/i.test(source);
 
 const getShaderHeaderEndIndex = (source: string) => {
   let index = 0;
