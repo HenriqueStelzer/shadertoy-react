@@ -51,7 +51,7 @@ export const processUniform = (gl: WebGLContext, location, type: Uniforms, value
       gl.uniform3i(location, value[0], value[1], value[2]);
       break;
     case '4i':
-      gl.uniform3i(location, value[0], value[1], value[2], value[3]);
+      gl.uniform4i(location, value[0], value[1], value[2], value[3]);
       break;
     case '1iv':
       gl.uniform1iv(location, value);
