@@ -1,2 +1,3 @@
-// $flow
-export const SRLOG = (text: string) => `shadertoy-react: ${text}`;
+// @flow
+export const APP_NAME = "glsl-helpers-react";
+export const SRLOG = (text: string) => `${APP_NAME}: ${text}`;
