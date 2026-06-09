@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a problem with glsl-helpers-react / GlslCanvas
 title: ''
 labels: ''
 assignees: ''
@@ -8,31 +8,36 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+A clear description of what went wrong (black canvas, compile error, wrong uniforms, mouse coords, etc.).
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Minimal reproduction**
+Smallest `fs` / component usage that triggers the bug:
+
+```jsx
+import GlslCanvas from "glsl-helpers-react";
+
+// your minimal repro
+```
+
+**`webgl` prop**
+- [ ] `auto` (default)
+- [ ] `1`
+- [ ] `2`
+
+**Environment**
+- OS:
+- Browser + version:
+- GPU (if known):
+- glsl-helpers-react version:
+
+**Console output**
+Paste full `glsl-helpers-react:` shader compile/link errors from the browser console.
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+What you expected to happen.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**Screenshots / recording**
+If visual, attach screenshots or a short recording.
 
 **Additional context**
-Add any other context about the problem here.
+Props in use (`textures`, `passes`, `defines`, `uniforms`, etc.). See [ISSUES.md](../../ISSUES.md) and [troubleshooting](../../docs/troubleshooting.md).

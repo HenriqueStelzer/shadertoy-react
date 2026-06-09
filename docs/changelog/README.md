@@ -19,8 +19,8 @@ Only published npm versions are listed. Intermediate semver numbers (1.0.1, 1.0.
 | 1.1.1 | 2019-06-11 | 20 | [1.1.1.md](./1.1.1.md) |
 | 1.1.2 | 2021-12-30 | 2 | [1.1.2.md](./1.1.2.md) |
 | 1.2.0 | 2026-06-06 | 4 | [1.2.0.md](./1.2.0.md) |
-| 2.0.0 | 2026-06-08 | 13 | [2.0.0.md](./2.0.0.md) |
+| 2.0.0 | 2026-06-08 | 9+6 | [2.0.0.md](./2.0.0.md) |
 
-**Total commits:** 117
+**Total commits:** 119
 
 Generated from git history. Regenerate with `npm run changelog`.
