@@ -7,8 +7,11 @@ const UPSTREAM_URL = "https://github.com/mvilledieu/shadertoy-react";
 const FORK_URL = "https://github.com/HenriqueStelzer/glsl-helpers-react";
 const OUTPUT_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "docs", "changelog");
 
-const repoUrlForVersion = (version) =>
-  version.startsWith("2.") ? FORK_URL : UPSTREAM_URL;
+/** Fork maintenance starts at 1.2.0; upstream repo does not contain those commits. */
+const repoUrlForVersion = (version) => {
+  const [major, minor] = version.split(".").map(Number);
+  return major > 1 || (major === 1 && minor >= 2) ? FORK_URL : UPSTREAM_URL;
+};
 
 /** Version bumps: short hash of the commit that set package.json to this version. */
 const VERSION_BUMPS = [
@@ -22,10 +25,19 @@ const VERSION_BUMPS = [
   { hash: "620dff0", version: "1.1.1" },
   { hash: "9169a22", version: "1.1.2" },
   { hash: "3985271", version: "1.2.0" },
-  // Add after 2.0.0 release commit: { hash: "<short>", version: "2.0.0" },
+  { hash: "feb16ff", version: "2.0.0" },
 ].filter((b) => b.hash !== "0000000");
 
 const VERSION_SUMMARIES = {
+  "1.2.0": `## Summary
+
+**Package:** \`shadertoy-react\` (fork maintenance — published from [HenriqueStelzer/glsl-helpers-react](${FORK_URL}))
+
+- Webpack 5 and React 17–19 peer dependency support
+- WebGL2 / GLSL 3.00 auto-detection and \`webgl\` prop
+- Build toolchain modernization (Babel 7.26, webpack-dev-server 5)
+
+`,
   "2.0.0": `## Summary
 
 **Package:** \`glsl-helpers-react\` (rebrand from \`shadertoy-react\` / \`shadertoy-react-19\`)
@@ -53,6 +65,7 @@ const VERSION_SUMMARIES = {
 - Shader recompile no longer duplicates event listeners
 - Mouse click coordinates aligned with move handler
 - \`4i\` custom uniform uses \`uniform4i\`
+- \`rgba32f\` data textures gated on WebGL2 / \`OES_texture_float\`
 
 ### Docs & tooling
 - README rewrite with migration guide
@@ -144,8 +157,8 @@ function writeIndex(buckets) {
     "",
     "Commit history grouped by published npm version.",
     "",
-    "- **1.x:** [mvilledieu/shadertoy-react](https://github.com/mvilledieu/shadertoy-react) (upstream)",
-    "- **2.x:** [HenriqueStelzer/glsl-helpers-react](https://github.com/HenriqueStelzer/glsl-helpers-react)",
+    "- **1.0.0–1.1.2:** [mvilledieu/shadertoy-react](https://github.com/mvilledieu/shadertoy-react) (upstream)",
+    "- **1.2.0+:** [HenriqueStelzer/glsl-helpers-react](https://github.com/HenriqueStelzer/glsl-helpers-react) (fork)",
     "",
     "Only published npm versions are listed. Intermediate semver numbers (1.0.1, 1.0.4, 1.0.7, 1.0.9) were never published.",
     "",
