@@ -28,6 +28,11 @@ const VERSION_BUMPS = [
   { hash: "feb16ff", version: "2.0.0" },
 ].filter((b) => b.hash !== "0000000");
 
+/** Annotated git tags (may differ from the package.json bump commit). */
+const VERSION_TAGS = {
+  "2.0.0": { hash: "96b5cbf", tag: "v2.0.0" },
+};
+
 const VERSION_SUMMARIES = {
   "1.2.0": `## Summary
 
@@ -70,7 +75,8 @@ const VERSION_SUMMARIES = {
 ### Docs & tooling
 - README rewrite with migration guide
 - \`docs/changelog/\`, migration, textures, multi-pass, uniforms, troubleshooting
-- \`npm run changelog\` generator
+- \`docs/roadmap.md\` (replaces \`docs/TODO.md\`)
+- \`npm run changelog\` generator with fork-aware version boundaries
 
 `,
 };
@@ -118,6 +124,9 @@ function bucketByVersion(commits) {
 
 function writeVersionFile({ version, releaseCommit, releaseDate, commits }) {
   const repoUrl = repoUrlForVersion(version);
+  const tag = VERSION_TAGS[version];
+  const tagCommit = tag ? commits.find((c) => c.short === tag.hash) : undefined;
+
   const lines = [
     `# ${version}`,
     "",
@@ -126,6 +135,13 @@ function writeVersionFile({ version, releaseCommit, releaseDate, commits }) {
     `- **Commits:** ${commits.length}`,
     "",
   ];
+
+  if (tag && tagCommit) {
+    lines.push(
+      `- **Git tag:** [\`${tag.tag}\`](${repoUrl}/releases/tag/${tag.tag}) at [\`${tag.hash}\`](${repoUrl}/commit/${tagCommit.full})`,
+      ""
+    );
+  }
 
   if (VERSION_SUMMARIES[version]) {
     lines.push(VERSION_SUMMARIES[version]);
