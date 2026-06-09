@@ -93,10 +93,9 @@ Deploy after `examples/` changes: `npm run publish-demo` (see [CONTRIBUTING](CON
 
 ## Demo sandbox
 
-Six-tile browser sandbox — same idea as [upstream Demos](https://codesandbox.io/s/434qm4x4w0) (textures, mouse, clock, orientation, classic GLSL, custom uniforms).
+Six-tile browser sandbox — same layout as [upstream shadertoy-react Demos](https://github.com/mvilledieu/shadertoy-react/tree/master/examples) (textures, mouse, clock, orientation, classic GLSL, custom uniforms).
 
 * [Open in StackBlitz](https://stackblitz.com/github/HenriqueStelzer/glsl-helpers-react/tree/main/sandbox/demo-sandbox)
-* [Open in CodeSandbox](https://codesandbox.io/s/github/HenriqueStelzer/glsl-helpers-react/tree/main/sandbox/demo-sandbox)
 
 Source: [`sandbox/demo-sandbox`](sandbox/demo-sandbox/). To hack on the **full** grid locally: `npm start` in the repo root ([`examples/`](examples/)).
 
