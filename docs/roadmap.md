@@ -25,7 +25,6 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 | P0 | [Delete stale remote branches](#p0-delete-stale-remote-branches) | Partial |
 | P1 | [CodeSandbox / StackBlitz templates](#p1-codesandbox--stackblitz-templates) | Planned |
 | P1 | [Custom GLSL examples](#p1-custom-glsl-oriented-examples) | Planned |
-| P1 | [Agent skills + npm installer](#p1-agent-skills--npm-installer) | Planned |
 | P1 | [CI on pull requests](#p1-ci-on-pull-requests) | Planned |
 | P1 | [Bundle size budget](#p1-bundle-size-budget) | Planned |
 | P1 | [GitHub Pages demo deploy](#p1-github-pages-demo-deploy) | Planned |
@@ -148,12 +147,11 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 
 **Goal:** Clean GitHub branch list after merge.
 
-**Status:** `release/2.0.0` and agent fix branches removed. `modernize-react-webgl2` may still exist on remote.
+**Status:** `release/2.0.0` and ephemeral agent branches removed. `modernize-react-webgl2` may still exist on remote.
 
 **Branches safe to delete (no unique code):**
 
 - `modernize-react-webgl2` — merged via PR #1
-- `cursor/cloud-agent-*` — ephemeral agent commits touching only `examples/dist`
 
 **Depends on:** None
 
@@ -200,24 +198,6 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 - `docs/design/shaders.md`
 
 **Depends on:** Release 2.0.0
-
----
-
-### P1: Agent skills + npm installer
-
-**Goal:** Cursor Agent Skills for this library and GLSL authoring, installable into any project.
-
-**Why:** Skills today live only in the trade app and still reference `shadertoy-react-19`.
-
-**Deliverables**
-
-- `.cursor/skills/` in this repo (or separate npm package), e.g.:
-  - `glsl-helpers-react` — component API, props, migration from `shadertoy-react-19`
-  - `glsl-shaders` — SDF, raymarching, noise, fBm, GPU optimization references (port from trade)
-- npm installer spike: `npx create-glsl-helpers-skills` or scoped package that copies skills into `.cursor/skills/`
-- Open question: final package name and whether skills ship from this repo or `@scope/glsl-helpers-cursor-skills`
-
-**Depends on:** Custom GLSL examples (shared content), Release 2.0.0
 
 ---
 
