@@ -1,4 +1,4 @@
-# Roadmap / TODO
+# Roadmap
 
 Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirational until checked off in a release or PR.
 
@@ -11,19 +11,18 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 | **P2** | New runtimes or architectural splits |
 | **P3** | Research tracks and experiments |
 
-Shipped work is tracked in the [changelog](changelog/README.md) and README “What's new in 2.x” — not duplicated here.
-
 ---
 
 ## Summary
 
 | Priority | Item | Status |
 |----------|------|--------|
+| P0 | [Fork delta from shadertoy-react 1.x](#p0-fork-delta-from-shadertoy-react-1x-react-17-baseline--done) | Done |
 | P0 | [CONTRIBUTING.md](#p0-contributingmd) | Planned |
 | P0 | [ISSUES.md](#p0-issuesmd) | Planned |
 | P0 | [License naming clarification](#p0-license-naming-clarification) | Planned |
-| P0 | [Release 2.0.0](#p0-release-20) | In progress (PR #2) |
-| P0 | [Delete stale remote branches](#p0-delete-stale-remote-branches) | Planned |
+| P0 | [Release 2.0.0](#p0-release-20) | Done (npm publish pending) |
+| P0 | [Delete stale remote branches](#p0-delete-stale-remote-branches) | Partial |
 | P1 | [CodeSandbox / StackBlitz templates](#p1-codesandbox--stackblitz-templates) | Planned |
 | P1 | [Custom GLSL examples](#p1-custom-glsl-oriented-examples) | Planned |
 | P1 | [Agent skills + npm installer](#p1-agent-skills--npm-installer) | Planned |
@@ -45,6 +44,35 @@ Shipped work is tracked in the [changelog](changelog/README.md) and README “Wh
 
 ## P0 — Community, legal, and repo hygiene
 
+### P0: Fork delta from shadertoy-react 1.x (React 17 baseline) — Done
+
+**Baseline:** [mvilledieu/shadertoy-react](https://github.com/mvilledieu/shadertoy-react) **v1.1.2** — last upstream release before this fork. `ShadertoyReact`, React **16** peer, **WebGL 1 only**, image/video textures, `shouldComponentUpdate` always `false` (no live prop updates).
+
+**Shipped as:** `glsl-helpers-react` **v2.0.0** on `main` ([`v2.0.0`](https://github.com/HenriqueStelzer/glsl-helpers-react/releases/tag/v2.0.0), commit [`ebd5404`](https://github.com/HenriqueStelzer/glsl-helpers-react/commit/ebd5404)).
+
+| Area | shadertoy-react 1.1.2 | glsl-helpers-react 2.0.0 |
+|------|------------------------|---------------------------|
+| npm package | `shadertoy-react` | `glsl-helpers-react` |
+| Component export | `ShadertoyReact` (default) | `GlslCanvas` (default); `ShadertoyReact` deprecated alias |
+| Bundle | `lib/shadertoy-react.min.js` | `lib/glsl-helpers-react.min.js` |
+| React peers | `^16` | `^17 \|\| ^18 \|\| ^19` |
+| WebGL | WebGL 1 only | WebGL 1 / 2 via `webgl="auto" \| "1" \| "2"`; GLSL 3.00 auto-preprocess |
+| Prop updates | None without remount | Reactive `fs`, `vs`, `textures`, `defines`, `passes`, `uniforms`, `precision`, … |
+| Shader defines | `#define DPR` only | `defines` prop + `DPR` |
+| Textures | Image, video | + camera, `rgba8` / `rgba32f` data, cube maps, keyboard, responsive `srcSet` |
+| Channel time | — | `iChannelTime` (video / camera sync) |
+| Multi-pass | — | `passes` + `FramebufferPool` (buffer pipelines) |
+| Persistent clock | — | `persistentTime` prop → `iPersistentTime` (localStorage) |
+| TypeScript | — | `lib/index.d.ts` |
+| Build toolchain | Webpack 4, Babel 7.16 | Webpack 5, Babel 7.26, webpack-dev-server 5 |
+| Docs | README + examples | Migration guide, textures, multi-pass, uniforms, troubleshooting, versioned changelog |
+| Examples | Classic demo grid | + camera, cube, data texture, multi-pass, persistent time, srcSet tiles |
+| Post-release fixes | — | WebGL2 sized `internalFormat` for FBO/data/keyboard; multi-pass `iChannel` offset; empty `srcSet` fallback |
+
+**Migration:** [migration-2.0.md](migration-2.0.md) · **Changelog:** [changelog/2.0.0.md](changelog/2.0.0.md) · **API overview:** README “What's new in 2.x”
+
+---
+
 ### P0: CONTRIBUTING.md
 
 **Goal:** Onboard contributors with fork-specific workflow.
@@ -56,7 +84,7 @@ Shipped work is tracked in the [changelog](changelog/README.md) and README “Wh
 - Branch naming and PR expectations
 - Before opening a PR: `npm run transpile`, `npm run build`, rebuild `examples/dist` when examples change
 - Regenerate changelog when version-bump commits change: `npm run changelog`
-- Conventional commit style (as used on `release/2.0.0`)
+- Conventional commit style (as used on `main`)
 - Credit [mvilledieu/shadertoy-react](https://github.com/mvilledieu/shadertoy-react) for 1.x history
 - PR checklist: TypeScript defs present in `lib/index.d.ts`
 
@@ -101,16 +129,16 @@ Shipped work is tracked in the [changelog](changelog/README.md) and README “Wh
 
 ### P0: Release 2.0.0
 
-**Goal:** Merge PR #2, publish `glsl-helpers-react@2.0.0` to npm.
+**Goal:** Ship `glsl-helpers-react@2.0.0` to npm.
 
-**Why:** All 2.x features, docs, and rebrand live on `release/2.0.0`; `master` is still at 1.2.0-era `shadertoy-react`.
+**Status:** Merged to `main`, tagged `v2.0.0`. Remaining: `npm publish` (requires npm auth).
 
 **Deliverables**
 
-- Merge [PR #2](https://github.com/HenriqueStelzer/glsl-helpers-react/pull/2)
-- Push pending commits (including changelog boundary fix)
-- `npm publish` after `npm run prepublishOnly`
-- Tag `v2.0.0`
+- [x] Merge 2.0 release branch into `main`
+- [x] Copilot review fixes (reactive props, WebGL2 formats, multi-pass channels)
+- [x] Tag `v2.0.0`
+- [ ] `npm publish` after `npm run prepublishOnly`
 
 **Depends on:** Changelog docs accurate for 1.2.0 / 2.0.0 split
 
@@ -120,12 +148,14 @@ Shipped work is tracked in the [changelog](changelog/README.md) and README “Wh
 
 **Goal:** Clean GitHub branch list after merge.
 
+**Status:** `release/2.0.0` and agent fix branches removed. `modernize-react-webgl2` may still exist on remote.
+
 **Branches safe to delete (no unique code):**
 
 - `modernize-react-webgl2` — merged via PR #1
 - `cursor/cloud-agent-*` — ephemeral agent commits touching only `examples/dist`
 
-**Depends on:** Release 2.0.0 merged (optional; can delete agent branches anytime)
+**Depends on:** None
 
 ---
 
@@ -389,10 +419,4 @@ Shipped work is tracked in the [changelog](changelog/README.md) and README “Wh
 
 ---
 
-## Shipped in 2.x (not TODO)
-
-See README “What's new in 2.x” and [changelog/2.0.0.md](changelog/2.0.0.md) for completed upstream roadmap items (WebGL2, multi-pass, textures, keyboard, `iChannelTime`, TypeScript defs, etc.).
-
----
-
-*Last updated: 2026-06-08. Regenerate or extend this file when priorities shift.*
+*Last updated: 2026-06-09. Regenerate or extend this file when priorities shift.*
