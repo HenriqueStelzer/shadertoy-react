@@ -17,7 +17,21 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 
 | Priority | Item | Status |
 |----------|------|--------|
-| P0 | [Fork delta from shadertoy-react 1.x](#p0-fork-delta-from-shadertoy-react-1x-react-17-baseline--done) | Done |
+| P0 | [Package rebrand (`glsl-helpers-react`)](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [`GlslCanvas` + deprecated `ShadertoyReact` alias](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [React 17–19 peer support](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [WebGL2 / GLSL 3.00 (`webgl` prop)](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [Reactive prop updates](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [`defines` prop](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [Extended textures (camera, data, cube, keyboard, `srcSet`)](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [`iChannelTime` uniform](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [Multi-pass rendering (`passes`)](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [`persistentTime` / `iPersistentTime`](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [TypeScript definitions](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [Webpack 5 / modern build toolchain](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [2.0 docs (migration, textures, multi-pass, changelog)](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [2.0 example demos](#completed--fork-from-shadertoy-react-1112) | Done |
+| P0 | [WebGL2 `internalFormat` + multi-pass channel fixes](#completed--fork-from-shadertoy-react-1112) | Done |
 | P0 | [CONTRIBUTING.md](#p0-contributingmd) | Planned |
 | P0 | [ISSUES.md](#p0-issuesmd) | Planned |
 | P0 | [License naming clarification](#p0-license-naming-clarification) | Planned |
@@ -43,32 +57,29 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 
 ## P0 — Community, legal, and repo hygiene
 
-### P0: Fork delta from shadertoy-react 1.x (React 17 baseline) — Done
+### Completed — fork from shadertoy-react 1.1.2
 
-**Baseline:** [mvilledieu/shadertoy-react](https://github.com/mvilledieu/shadertoy-react) **v1.1.2** — last upstream release before this fork. `ShadertoyReact`, React **16** peer, **WebGL 1 only**, image/video textures, `shouldComponentUpdate` always `false` (no live prop updates).
+**Baseline:** [mvilledieu/shadertoy-react](https://github.com/mvilledieu/shadertoy-react) **v1.1.2** — `ShadertoyReact`, React **16**, WebGL **1** only, image/video textures, no live prop updates.
 
-**Shipped as:** `glsl-helpers-react` **v2.0.0** on `main` ([`v2.0.0`](https://github.com/HenriqueStelzer/glsl-helpers-react/releases/tag/v2.0.0), commit [`ebd5404`](https://github.com/HenriqueStelzer/glsl-helpers-react/commit/ebd5404)).
+**Shipped:** `glsl-helpers-react` **v2.0.0** on `main` ([`v2.0.0`](https://github.com/HenriqueStelzer/glsl-helpers-react/releases/tag/v2.0.0)).
 
-| Area | shadertoy-react 1.1.2 | glsl-helpers-react 2.0.0 |
-|------|------------------------|---------------------------|
-| npm package | `shadertoy-react` | `glsl-helpers-react` |
-| Component export | `ShadertoyReact` (default) | `GlslCanvas` (default); `ShadertoyReact` deprecated alias |
-| Bundle | `lib/shadertoy-react.min.js` | `lib/glsl-helpers-react.min.js` |
-| React peers | `^16` | `^17 \|\| ^18 \|\| ^19` |
-| WebGL | WebGL 1 only | WebGL 1 / 2 via `webgl="auto" \| "1" \| "2"`; GLSL 3.00 auto-preprocess |
-| Prop updates | None without remount | Reactive `fs`, `vs`, `textures`, `defines`, `passes`, `uniforms`, `precision`, … |
-| Shader defines | `#define DPR` only | `defines` prop + `DPR` |
-| Textures | Image, video | + camera, `rgba8` / `rgba32f` data, cube maps, keyboard, responsive `srcSet` |
-| Channel time | — | `iChannelTime` (video / camera sync) |
-| Multi-pass | — | `passes` + `FramebufferPool` (buffer pipelines) |
-| Persistent clock | — | `persistentTime` prop → `iPersistentTime` (localStorage) |
-| TypeScript | — | `lib/index.d.ts` |
-| Build toolchain | Webpack 4, Babel 7.16 | Webpack 5, Babel 7.26, webpack-dev-server 5 |
-| Docs | README + examples | Migration guide, textures, multi-pass, uniforms, troubleshooting, versioned changelog |
-| Examples | Classic demo grid | + camera, cube, data texture, multi-pass, persistent time, srcSet tiles |
-| Post-release fixes | — | WebGL2 sized `internalFormat` for FBO/data/keyboard; multi-pass `iChannel` offset; empty `srcSet` fallback |
-
-**Migration:** [migration-2.0.md](migration-2.0.md) · **Changelog:** [changelog/2.0.0.md](changelog/2.0.0.md) · **API overview:** README “What's new in 2.x”
+| Item | Notes |
+|------|--------|
+| Package rebrand (`glsl-helpers-react`) | npm name, `lib/glsl-helpers-react.min.js` |
+| `GlslCanvas` + deprecated `ShadertoyReact` alias | New default export; legacy alias kept |
+| React 17–19 peer support | Was React 16 only |
+| WebGL2 / GLSL 3.00 (`webgl` prop) | `webgl="auto" \| "1" \| "2"`; shader preprocess |
+| Reactive prop updates | `fs`, `vs`, `textures`, `defines`, `passes`, `uniforms`, `precision` without remount |
+| `defines` prop | Inject `#define` constants from React (in addition to `DPR`) |
+| Extended textures | Camera, `rgba8` / `rgba32f` data, cube maps, keyboard, responsive `srcSet` |
+| `iChannelTime` uniform | Per-channel playback time for video / camera |
+| Multi-pass rendering (`passes`) | `FramebufferPool`, buffer pipelines |
+| `persistentTime` / `iPersistentTime` | Opt-in epoch clock via localStorage |
+| TypeScript definitions | `lib/index.d.ts` |
+| Webpack 5 / modern build toolchain | Babel 7.26, webpack-dev-server 5 |
+| 2.0 docs | [migration-2.0.md](migration-2.0.md), textures, multi-pass, uniforms, troubleshooting, [changelog](changelog/README.md) |
+| 2.0 example demos | Camera, cube, data texture, multi-pass, persistent time, srcSet tiles |
+| WebGL2 `internalFormat` + multi-pass channel fixes | Sized `RGBA8`/`RGBA32F`; `iChannel` offset when `inputs` + textures coexist; empty `srcSet` fallback |
 
 ---
 
@@ -399,4 +410,4 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 
 ---
 
-*Last updated: 2026-06-09. Regenerate or extend this file when priorities shift.*
+*Last updated: 2026-06-09 (fork items listed individually). Regenerate or extend this file when priorities shift.*
