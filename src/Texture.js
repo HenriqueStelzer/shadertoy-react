@@ -2,6 +2,7 @@
 
 import { SRLOG } from "./prefixLogs";
 import KeyboardTexture, { resolveKeyboardUrl } from "./KeyboardTexture";
+import { isWebGL2, rgbaInternalFormat } from "./glFormats";
 
 export const NearestFilter = 9728;
 export const LinearFilter = 9729;
@@ -62,7 +63,9 @@ export const resolveTextureUrl = (
 
   const densities = Object.keys(srcSet)
     .map(Number)
+    .filter((d) => !Number.isNaN(d))
     .sort((a, b) => a - b);
+  if (densities.length === 0) return url || "";
   let selected = densities[0];
   densities.forEach((d) => {
     if (d <= devicePixelRatio) selected = d;
@@ -272,8 +275,7 @@ export default class Texture {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
 
     if (format === "rgba32f") {
-      const isWebGL2 = !!gl.createVertexArray;
-      if (!isWebGL2 && !gl.getExtension("OES_texture_float")) {
+      if (!isWebGL2(gl) && !gl.getExtension("OES_texture_float")) {
         return Promise.reject(
           new Error(
             SRLOG(
@@ -285,7 +287,7 @@ export default class Texture {
       gl.texImage2D(
         gl.TEXTURE_2D,
         0,
-        gl.RGBA,
+        rgbaInternalFormat(gl, { float: true }),
         width,
         height,
         0,
@@ -297,7 +299,7 @@ export default class Texture {
       gl.texImage2D(
         gl.TEXTURE_2D,
         0,
-        gl.RGBA,
+        rgbaInternalFormat(gl),
         width,
         height,
         0,

@@ -1,5 +1,6 @@
 // @flow
 import { SRLOG } from "./prefixLogs";
+import { rgbaInternalFormat } from "./glFormats";
 
 const KEYBOARD_WIDTH = 256;
 const KEYBOARD_HEIGHT = 3;
@@ -51,7 +52,7 @@ export default class KeyboardTexture {
     gl.texImage2D(
       gl.TEXTURE_2D,
       0,
-      gl.RGBA,
+      rgbaInternalFormat(gl),
       KEYBOARD_WIDTH,
       KEYBOARD_HEIGHT,
       0,

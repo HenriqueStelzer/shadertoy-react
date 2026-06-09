@@ -1,5 +1,7 @@
 // @flow
 
+import { rgbaInternalFormat } from "./glFormats";
+
 export default class FramebufferPool {
   constructor(gl: WebGLRenderingContext | WebGL2RenderingContext) {
     this.gl = gl;
@@ -30,7 +32,7 @@ export default class FramebufferPool {
     gl.texImage2D(
       gl.TEXTURE_2D,
       0,
-      gl.RGBA,
+      rgbaInternalFormat(gl),
       width,
       height,
       0,
