@@ -32,9 +32,7 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 | P0 | [2.0 docs (migration, textures, multi-pass, changelog)](#completed--fork-from-shadertoy-react-1112) | Done |
 | P0 | [2.0 example demos](#completed--fork-from-shadertoy-react-1112) | Done |
 | P0 | [WebGL2 `internalFormat` + multi-pass channel fixes](#completed--fork-from-shadertoy-react-1112) | Done |
-| P0 | [CONTRIBUTING.md](#p0-contributingmd) | Planned |
-| P0 | [ISSUES.md](#p0-issuesmd) | Planned |
-| P0 | [License naming clarification](#p0-license-naming-clarification) | Planned |
+| P0 | [Release 2.0.1 hygiene](#p0-release-201) | Planned |
 | P0 | [Release 2.0.0](#p0-release-20) | Done (npm publish pending) |
 | P0 | [Delete stale remote branches](#p0-delete-stale-remote-branches) | Partial |
 | P1 | [CodeSandbox / StackBlitz templates](#p1-codesandbox--stackblitz-templates) | Planned |
@@ -77,15 +75,33 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 | `persistentTime` / `iPersistentTime` | Opt-in epoch clock via localStorage |
 | TypeScript definitions | `lib/index.d.ts` |
 | Webpack 5 / modern build toolchain | Babel 7.26, webpack-dev-server 5 |
-| 2.0 docs | [migration-2.0.md](migration-2.0.md), textures, multi-pass, uniforms, troubleshooting, [changelog](changelog/README.md) |
+| 2.0 docs | [migration-2.0.md](migration-2.0.md), [roadmap](roadmap.md), textures, multi-pass, uniforms, troubleshooting, [changelog](changelog/README.md) |
 | 2.0 example demos | Camera, cube, data texture, multi-pass, persistent time, srcSet tiles |
 | WebGL2 `internalFormat` + multi-pass channel fixes | Sized `RGBA8`/`RGBA32F`; `iChannel` offset when `inputs` + textures coexist; empty `srcSet` fallback |
+
+---
+
+### P0: Release 2.0.1
+
+**Goal:** Repo hygiene and contributor onboarding for the post-2.0.0 line.
+
+**Target npm version:** `2.0.1` (patch — docs and repo files only; no API changes).
+
+| Item | Section |
+|------|---------|
+| [CONTRIBUTING.md](#p0-contributingmd) | Contributor workflow |
+| [ISSUES.md](#p0-issuesmd) | Bug-report expectations |
+| [License naming clarification](#p0-license-naming-clarification) | Single canonical `LICENSE` |
+
+**Depends on:** `glsl-helpers-react@2.0.0` published to npm
 
 ---
 
 ### P0: CONTRIBUTING.md
 
 **Goal:** Onboard contributors with fork-specific workflow.
+
+**Milestone:** 2.0.1
 
 **Why:** No contributor guide exists today; issue templates are still generic upstream copies.
 
@@ -106,6 +122,8 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 
 **Goal:** Tell reporters what we need to reproduce WebGL issues quickly.
 
+**Milestone:** 2.0.1
+
 **Why:** GitHub only has generic [bug](../.github/ISSUE_TEMPLATE/bug_report.md) and [feature](../.github/ISSUE_TEMPLATE/feature_request.md) templates with no fork branding.
 
 **Deliverables**
@@ -124,6 +142,8 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 
 **Goal:** One canonical MIT license file and clear attribution docs.
 
+**Milestone:** 2.0.1
+
 **Why:** Repo has both `LICENSE` (dual copyright, fork) and `LICENCE.txt` (upstream-only, British spelling). README points only to `LICENSE`.
 
 **Deliverables**
@@ -141,16 +161,17 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 
 **Goal:** Ship `glsl-helpers-react@2.0.0` to npm.
 
-**Status:** Merged to `main`, tagged `v2.0.0`. Remaining: `npm publish` (requires npm auth).
+**Status:** On `main`; tag [`v2.0.0`](https://github.com/HenriqueStelzer/glsl-helpers-react/releases/tag/v2.0.0) targets `96b5cbf` (code + docs). Remaining: `npm publish` (requires npm auth).
 
 **Deliverables**
 
 - [x] Merge 2.0 release branch into `main`
 - [x] Copilot review fixes (reactive props, WebGL2 formats, multi-pass channels)
-- [x] Tag `v2.0.0`
-- [ ] `npm publish` after `npm run prepublishOnly`
+- [x] Roadmap and changelog docs on `main`
+- [ ] Move `v2.0.0` tag to `96b5cbf` if still at `ebd5404`
+- [ ] `npm publish` from tag: `git checkout v2.0.0 && npm run publish-npm`
 
-**Depends on:** Changelog docs accurate for 1.2.0 / 2.0.0 split
+**Depends on:** [Changelog](changelog/README.md) lists all 2.0.0 commits (code + docs)
 
 ---
 
@@ -158,11 +179,12 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 
 **Goal:** Clean GitHub branch list after merge.
 
-**Status:** `release/2.0.0` and ephemeral agent branches removed. `modernize-react-webgl2` may still exist on remote.
+**Status:** `release/2.0.0` removed. `modernize-react-webgl2` and merged doc branches may still exist on remote.
 
 **Branches safe to delete (no unique code):**
 
 - `modernize-react-webgl2` — merged via PR #1
+- `chore/changelog-2.0.1-alignment`, `release/2.0.1` — after doc PRs merge
 
 **Depends on:** None
 
@@ -245,7 +267,7 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 
 **Depends on:** Release 2.0.0 stable API (before splitting entry points)
 
-**Milestone:** 2.0.1 or 2.1.0
+**Milestone:** 2.1.0
 
 ---
 
@@ -410,4 +432,4 @@ Public backlog for **glsl-helpers-react**, ranked by priority. Items are aspirat
 
 ---
 
-*Last updated: 2026-06-09 (fork items listed individually). Regenerate or extend this file when priorities shift.*
+*Last updated: 2026-06-09. Docs and changelog count toward 2.0.0; repo hygiene targets 2.0.1.*
