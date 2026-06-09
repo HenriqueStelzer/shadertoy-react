@@ -1,5 +1,5 @@
 {
-  "name": "glsl-helpers-react-basic",
+  "name": "glsl-helpers-react-demo-sandbox",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,7 +11,8 @@
   "dependencies": {
     "glsl-helpers-react": "^2.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "styled-components": "^6.1.15"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",

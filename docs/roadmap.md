@@ -277,7 +277,7 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 - [x] npm version + gzip bundle size badges (like upstream)
 - [x] Shield badges for [roadmap](roadmap.md), [changelog](changelog/README.md), [migration-2.0](migration-2.0.md), [textures](textures.md), [multi-pass](multi-pass.md), [uniforms](uniforms.md), [troubleshooting](troubleshooting.md)
-- [x] Playground section with live CodeSandbox URLs once sandboxes exist
+- [x] Playground section with StackBlitz link + playground badge
 - [x] CONTRIBUTING / ISSUES badges when those files land (`2.0.1`)
 
 **Depends on:** CodeSandbox playground for live Playground links
@@ -308,7 +308,7 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 **Why:** [mvilledieu/shadertoy-react](https://github.com/mvilledieu/shadertoy-react) README linked to live sandboxes ([Basic](https://codesandbox.io/s/ojllzxvww6), [Demos](https://codesandbox.io/s/434qm4x4w0)); fork README has no Playground links yet.
 
-**Status:** Done — `sandbox/basic` and `sandbox/demos` (Vite); README Playground links.
+**Status:** Done — `sandbox/playground` (Vite + StackBlitz); README Playground link and badge.
 
 **Deliverables**
 
