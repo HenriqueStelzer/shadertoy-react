@@ -1,1 +1,10 @@
 node_modules
+
+# Obsidian — user-local vault state (shared config: app.json, core-plugins.json, appearance.json)
+docs/.obsidian/workspace.json
+docs/.obsidian/workspace-mobile.json
+docs/.obsidian/graph.json
+docs/.obsidian/cache/
+
+# Cursor — user-local editor/MCP config (global setup lives in ~/.cursor/)
+.cursor/

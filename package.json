@@ -1,6 +1,6 @@
 {
   "name": "glsl-helpers-react",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "React GLSL canvas component with Shadertoy-compatible uniforms, WebGL2 support, and extended texture helpers. Fork of shadertoy-react.",
   "main": "lib/glsl-helpers-react.min.js",
   "types": "lib/index.d.ts",

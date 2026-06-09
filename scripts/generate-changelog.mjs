@@ -26,11 +26,13 @@ const VERSION_BUMPS = [
   { hash: "9169a22", version: "1.1.2" },
   { hash: "3985271", version: "1.2.0" },
   { hash: "feb16ff", version: "2.0.0" },
+  // Add 2.0.1 bump commit short hash after release commit lands, then re-run npm run changelog
+  // { hash: "0000000", version: "2.0.1" },
 ].filter((b) => b.hash !== "0000000");
 
 /** Annotated git tags (may differ from the package.json bump commit). */
 const VERSION_TAGS = {
-  "2.0.0": { hash: "96b5cbf", tag: "v2.0.0" },
+  "2.0.0": { hash: "ebd5404", tag: "v2.0.0" },
 };
 
 const VERSION_SUMMARIES = {
@@ -79,6 +81,19 @@ const VERSION_SUMMARIES = {
 - \`npm run changelog\` generator with fork-aware version boundaries
 
 `,
+  "2.0.1": `## Summary
+
+**Package:** \`glsl-helpers-react@2.0.1\` — patch release (docs and repo hygiene only)
+
+### Docs & repo hygiene
+- [CONTRIBUTING.md](../../CONTRIBUTING.md) — fork workflow, PR checklist, Obsidian vault note
+- [ISSUES.md](../../ISSUES.md) — WebGL bug-report expectations
+- \`docs/.obsidian/\` — minimal Obsidian vault config
+- Refreshed GitHub issue templates for \`glsl-helpers-react\` / \`GlslCanvas\`
+- License naming: canonical LICENSE; removed duplicate LICENCE.txt
+- README badges and shader-content license clarification
+
+`,
 };
 
 function escapeMarkdown(text) {
@@ -122,23 +137,39 @@ function bucketByVersion(commits) {
   });
 }
 
+function splitCommitsAtTag(version, commits) {
+  const tag = VERSION_TAGS[version];
+  if (!tag) {
+    return { released: commits, postTag: [] };
+  }
+  const tagIndex = commits.findIndex((c) => c.short === tag.hash);
+  if (tagIndex === -1) {
+    return { released: commits, postTag: [] };
+  }
+  return {
+    released: commits.slice(0, tagIndex + 1),
+    postTag: commits.slice(tagIndex + 1),
+  };
+}
+
 function writeVersionFile({ version, releaseCommit, releaseDate, commits }) {
   const repoUrl = repoUrlForVersion(version);
   const tag = VERSION_TAGS[version];
-  const tagCommit = tag ? commits.find((c) => c.short === tag.hash) : undefined;
+  const { released, postTag } = splitCommitsAtTag(version, commits);
+  const commitCount = released.length + postTag.length;
 
   const lines = [
     `# ${version}`,
     "",
     `- **Release commit:** [\`${releaseCommit.short}\`](${repoUrl}/commit/${releaseCommit.full})`,
     `- **Release date:** ${releaseDate}`,
-    `- **Commits:** ${commits.length}`,
+    `- **Commits:** ${commitCount}`,
     "",
   ];
 
-  if (tag && tagCommit) {
+  if (tag) {
     lines.push(
-      `- **Git tag:** [\`${tag.tag}\`](${repoUrl}/releases/tag/${tag.tag}) at [\`${tag.hash}\`](${repoUrl}/commit/${tagCommit.full})`,
+      `- **Git tag:** [\`${tag.tag}\`](${repoUrl}/releases/tag/${tag.tag}) at [\`${tag.hash}\`](${repoUrl}/commit/${commits.find((c) => c.short === tag.hash)?.full ?? tag.hash})`,
       ""
     );
   }
@@ -147,21 +178,25 @@ function writeVersionFile({ version, releaseCommit, releaseDate, commits }) {
     lines.push(VERSION_SUMMARIES[version]);
   }
 
-  lines.push(
-    "## Commits",
-    "",
-    "| Date | Commit | Message |",
-    "|------|--------|---------|",
-  );
+  const writeCommitTable = (heading, rows) => {
+    if (rows.length === 0) {
+      return;
+    }
+    lines.push(heading, "", "| Date | Commit | Message |", "|------|--------|---------|");
+    for (const c of rows) {
+      const url = repoUrlForVersion(version);
+      lines.push(
+        `| ${c.date} | [\`${c.short}\`](${url}/commit/${c.full}) | ${escapeMarkdown(c.subject)} |`
+      );
+    }
+    lines.push("");
+  };
 
-  for (const c of commits) {
-    const url = repoUrlForVersion(version);
-    lines.push(
-      `| ${c.date} | [\`${c.short}\`](${url}/commit/${c.full}) | ${escapeMarkdown(c.subject)} |`
-    );
+  writeCommitTable("## Commits", released);
+  if (postTag.length > 0) {
+    writeCommitTable("## Commits (post-tag, on main)", postTag);
   }
 
-  lines.push("");
   writeFileSync(join(OUTPUT_DIR, `${version}.md`), lines.join("\n"));
 }
 
@@ -183,8 +218,11 @@ function writeIndex(buckets) {
   ];
 
   for (const b of buckets) {
+    const { released, postTag } = splitCommitsAtTag(b.version, b.commits);
+    const countLabel =
+      postTag.length > 0 ? `${released.length}+${postTag.length}` : String(b.commits.length);
     lines.push(
-      `| ${b.version} | ${b.releaseDate} | ${b.commits.length} | [${b.version}.md](./${b.version}.md) |`
+      `| ${b.version} | ${b.releaseDate} | ${countLabel} | [${b.version}.md](./${b.version}.md) |`
     );
   }
 

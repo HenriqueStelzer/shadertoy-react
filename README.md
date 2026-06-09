@@ -1,6 +1,18 @@
 # glsl-helpers-react
 
-[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
+[![npm version](https://badge.fury.io/js/glsl-helpers-react.svg)](https://www.npmjs.com/package/glsl-helpers-react)
+[![gzip size](https://img.badgesize.io/HenriqueStelzer/glsl-helpers-react/main/lib/glsl-helpers-react.min.js?label=gzip&compression=gzip)](https://github.com/HenriqueStelzer/glsl-helpers-react/blob/main/lib/glsl-helpers-react.min.js)
+[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/MIT)
+
+[![roadmap](https://img.shields.io/badge/docs-roadmap-0969da)](docs/roadmap.md)
+[![changelog](https://img.shields.io/badge/docs-changelog-0969da)](docs/changelog/README.md)
+[![migration 2.0](https://img.shields.io/badge/docs-migration%202.0-0969da)](docs/migration-2.0.md)
+[![textures](https://img.shields.io/badge/docs-textures-0969da)](docs/textures.md)
+[![multi-pass](https://img.shields.io/badge/docs-multi--pass-0969da)](docs/multi-pass.md)
+[![uniforms](https://img.shields.io/badge/docs-uniforms-0969da)](docs/uniforms.md)
+[![troubleshooting](https://img.shields.io/badge/docs-troubleshooting-0969da)](docs/troubleshooting.md)
+[![contributing](https://img.shields.io/badge/docs-contributing-0969da)](CONTRIBUTING.md)
+[![issues](https://img.shields.io/badge/docs-issues-0969da)](ISSUES.md)
 
 **React GLSL canvas with Shadertoy-compatible uniforms and extended helpers.**
 
@@ -22,6 +34,8 @@
 
 ## Documentation
 
+- [Contributing](CONTRIBUTING.md)
+- [Reporting issues](ISSUES.md)
 - [Roadmap](docs/roadmap.md)
 - [Changelog](docs/changelog/README.md)
 - [Migration guide (2.0)](docs/migration-2.0.md)
@@ -192,9 +206,13 @@ Each pass renders to an internal framebuffer (`target`) or to the screen (last p
 
 Set `webgl="2"` or `webgl="auto"` (default). Shadertoy syntax is rewritten automatically (`gl_FragColor` → `fragColor`, `texture2D` → `texture`). You can also author shaders with `#version 300 es` directly.
 
+## Playground
+
+Live CodeSandbox templates (like [upstream shadertoy-react](https://github.com/mvilledieu/shadertoy-react#playground)) are planned — see [roadmap](docs/roadmap.md#codesandbox-playground-like-upstream). Until then, run the local demo grid below.
+
 ## Examples
 
-Run `npm start` and open the demo grid. Tiles include: basic shader, mouse, clock, device orientation, custom uniforms, WebGL2 syntax, keyboard, multi-pass, persistent time, camera, data texture, cube map, and `srcSet` density.
+Run `npm start` and open the demo grid (**scroll down** — tiles extend below the first viewport). Includes: basic shader, mouse, clock, device orientation, custom uniforms, WebGL2 syntax, keyboard, multi-pass, persistent time, camera, data texture, cube map, and `srcSet` density.
 
 ## How it works
 
@@ -220,6 +238,8 @@ A full-viewport quad is rendered with WebGL. Canvas size follows the parent elem
 ## License
 
 MIT — see [LICENSE](LICENSE). Original work © Morgan Villedieu; fork maintenance © Henrique Stelzer de Oliveira.
+
+**Shader examples** in `examples/src/shaders/` may carry separate licenses (e.g. CC BY-NC-SA from Shadertoy) noted in file headers. Those licenses apply to shader source only, not the npm package.
 
 ## Attribution
 
