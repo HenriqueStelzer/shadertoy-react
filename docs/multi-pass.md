@@ -28,7 +28,9 @@ For each pass:
 
 - `inputs[0]` → texture unit 0 → `iChannel0`
 - `inputs[1]` → texture unit 1 → `iChannel1`
-- Prop `textures[n]` → unit `inputs.length + n`
+- Prop `textures[n]` → unit `inputs.length + n` → uniform `iChannel{inputs.length + n}`
+
+When a pass has both buffer `inputs` and prop `textures`, channels are shared: buffers occupy `iChannel0..N-1`, prop textures start at `iChannelN`.
 
 ## Framebuffer pool
 
@@ -37,7 +39,7 @@ For each pass:
 ## Limitations
 
 1. **No ping-pong** — Each `target` is a single buffer. Feedback shaders read the **previous frame** (one frame delay), not same-frame ping-pong like full Shadertoy.
-2. **No `iChannelResolution` for buffers** — Buffer sizes match the canvas; only prop textures populate `iChannelResolution`.
+2. **No `iChannelResolution` for buffers** — Buffer sizes match the canvas; only prop textures populate `iChannelResolution`. In multi-pass passes with `inputs`, `iChannelResolution` / `iChannelTime` indices still follow the prop `textures` array (not the channel offset).
 3. **Experimental** — Complex graphs may need custom FBO wiring outside this API.
 
 ## Clock uniforms

@@ -214,6 +214,53 @@ const definesEqual = (a: ?Object, b: ?Object) =>
 const passesEqual = (a: ?Array<PassConfig>, b: ?Array<PassConfig>) =>
   JSON.stringify(a || []) === JSON.stringify(b || []);
 
+const clearColorEqual = (a: ?Array<number>, b: ?Array<number>) =>
+  JSON.stringify(a || [0, 0, 0, 1]) === JSON.stringify(b || [0, 0, 0, 1]);
+
+const propsAffectingScene = (prev: Props, next: Props): boolean =>
+  prev.style !== next.style ||
+  prev.webgl !== next.webgl ||
+  prev.fs !== next.fs ||
+  prev.vs !== next.vs ||
+  prev.devicePixelRatio !== next.devicePixelRatio ||
+  prev.lerp !== next.lerp ||
+  prev.precision !== next.precision ||
+  !definesEqual(prev.defines, next.defines) ||
+  !passesEqual(prev.passes, next.passes) ||
+  !texturesEqual(prev.textures, next.textures) ||
+  !uniformsSchemaEqual(prev.uniforms, next.uniforms) ||
+  !clearColorEqual(prev.clearColor, next.clearColor) ||
+  !persistentTimeEqual(prev.persistentTime, next.persistentTime);
+
+const isTextureChannelUniform = (uniform: string) =>
+  uniform.startsWith(UNIFORM_CHANNEL) &&
+  uniform !== UNIFORM_CHANNELRESOLUTION &&
+  uniform !== UNIFORM_CHANNELTIME;
+
+const uniformMatchesSource = (
+  uniform: string,
+  uniformSource: string,
+  channelOffset: number
+) => {
+  if (isTextureChannelUniform(uniform)) {
+    const id = parseInt(uniform.slice(UNIFORM_CHANNEL.length), 10);
+    if (!Number.isNaN(id)) {
+      return uniformSource.includes(`${UNIFORM_CHANNEL}${id + channelOffset}`);
+    }
+  }
+  return uniformSource.includes(uniform);
+};
+
+const shaderUniformName = (uniform: string, channelOffset: number) => {
+  if (isTextureChannelUniform(uniform) && channelOffset > 0) {
+    const id = parseInt(uniform.slice(UNIFORM_CHANNEL.length), 10);
+    if (!Number.isNaN(id)) {
+      return `${UNIFORM_CHANNEL}${id + channelOffset}`;
+    }
+  }
+  return uniform;
+};
+
 export default class GlslCanvas extends Component<Props, *> {
   constructor(props: Props) {
     super(props);
@@ -279,7 +326,7 @@ export default class GlslCanvas extends Component<Props, *> {
   };
 
   shouldComponentUpdate(nextProps: Props) {
-    return nextProps.style !== this.props.style;
+    return propsAffectingScene(this.props, nextProps);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -305,6 +352,7 @@ export default class GlslCanvas extends Component<Props, *> {
       prevProps.persistentTime,
       this.props.persistentTime
     );
+    const precisionChanged = prevProps.precision !== this.props.precision;
 
     if (persistentTimeChanged) {
       this.initPersistentTime();
@@ -340,7 +388,14 @@ export default class GlslCanvas extends Component<Props, *> {
       this.processCustomUniforms();
     }
 
-    if (fsChanged || vsChanged || definesChanged || passesChanged || uniformsSchemaChanged) {
+    if (
+      fsChanged ||
+      vsChanged ||
+      definesChanged ||
+      passesChanged ||
+      uniformsSchemaChanged ||
+      precisionChanged
+    ) {
       this.recompileShaders();
     }
 
@@ -671,21 +726,28 @@ export default class GlslCanvas extends Component<Props, *> {
         if (loc) gl.uniform1i(loc, inputIdx);
       });
 
+      const inputCount = (pass.inputs || []).length;
       this.texturesArr.forEach((texture, id) => {
         if (!texture.isLoaded) return;
-        const channelKey = `${UNIFORM_CHANNEL}${id}`;
-        if (!this.uniforms[channelKey] || !this.uniforms[channelKey].isNeeded) {
+        const textureUniformKey = `${UNIFORM_CHANNEL}${id}`;
+        if (
+          !this.uniforms[textureUniformKey] ||
+          !this.uniforms[textureUniformKey].isNeeded
+        ) {
           return;
         }
-        const unit = (pass.inputs || []).length + id;
-        gl.activeTexture(gl.TEXTURE0 + unit);
+        const channelIdx = inputCount + id;
+        gl.activeTexture(gl.TEXTURE0 + channelIdx);
         if (texture.isCube) {
           gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture._webglTexture);
         } else {
           gl.bindTexture(gl.TEXTURE_2D, texture._webglTexture);
         }
-        const loc = gl.getUniformLocation(program, channelKey);
-        if (loc) gl.uniform1i(loc, unit);
+        const loc = gl.getUniformLocation(
+          program,
+          `${UNIFORM_CHANNEL}${channelIdx}`
+        );
+        if (loc) gl.uniform1i(loc, channelIdx);
         if (texture.isVideo && texture.source) {
           texture.updateTexture(
             texture._webglTexture,
@@ -748,7 +810,13 @@ export default class GlslCanvas extends Component<Props, *> {
     if (passes && passes.length > 0) {
       this.disposePassPrograms();
       this.passPrograms = passes.map((pass) => {
-        const shaders = this.preProcessShaders(pass.fs, vs || defaultVs, pass.fs);
+        const channelOffset = (pass.inputs || []).length;
+        const shaders = this.preProcessShaders(
+          pass.fs,
+          vs || defaultVs,
+          pass.fs,
+          channelOffset
+        );
         return this.linkProgram(shaders.fs, shaders.vs);
       });
       return;
@@ -861,7 +929,12 @@ export default class GlslCanvas extends Component<Props, *> {
       });
   };
 
-  preProcessShaders = (fs: string, vs: string, uniformSource: string) => {
+  preProcessShaders = (
+    fs: string,
+    vs: string,
+    uniformSource: string,
+    channelOffset: number = 0
+  ) => {
     const { precision, devicePixelRatio = 1, defines } = this.props;
 
     const dprString = `#define DPR ${devicePixelRatio.toFixed(1)}\n`;
@@ -914,16 +987,16 @@ export default class GlslCanvas extends Component<Props, *> {
       : fsString.length;
 
     Object.keys(this.uniforms).forEach((uniform) => {
-      if (uniformSource.includes(uniform)) {
-        fsString = insertStringAtIndex(
-          fsString,
-          `uniform ${this.uniforms[uniform].type} ${uniform}${
-            this.uniforms[uniform].arraySize || ""
-          }; \n`,
-          uniformInsertIndex
-        );
-        this.uniforms[uniform].isNeeded = true;
-      }
+      if (!uniformMatchesSource(uniform, uniformSource, channelOffset)) return;
+      const declaredName = shaderUniformName(uniform, channelOffset);
+      fsString = insertStringAtIndex(
+        fsString,
+        `uniform ${this.uniforms[uniform].type} ${declaredName}${
+          this.uniforms[uniform].arraySize || ""
+        }; \n`,
+        uniformInsertIndex
+      );
+      this.uniforms[uniform].isNeeded = true;
     });
 
     if (/mainImage/.test(fs)) {
