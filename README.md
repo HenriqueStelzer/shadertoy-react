@@ -22,6 +22,7 @@
 
 ## Documentation
 
+- [Roadmap / TODO](docs/TODO.md)
 - [Changelog](docs/changelog/README.md)
 - [Migration guide (2.0)](docs/migration-2.0.md)
 - [Textures](docs/textures.md)
