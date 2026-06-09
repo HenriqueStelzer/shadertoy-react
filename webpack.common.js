@@ -6,7 +6,7 @@ const htmlWebpackPlugin = new HtmlWebpackPlugin({
 });
 
 module.exports = {
-  entry: path.join(__dirname, "examples/src/index.jsx"),
+  entry: path.join(__dirname, "examples/src/index.tsx"),
   output: {
     path: path.join(__dirname, "examples/dist"),
     filename: "bundle.js"
@@ -14,9 +14,13 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|jsx|ts|tsx)$/,
         use: "babel-loader",
         exclude: /node_modules/
+      },
+      {
+        test: /\.frag$/,
+        type: "asset/source",
       },
       {
         test: /\.(png|jpg|gif|mp4|avi|m4v)$/,
@@ -26,7 +30,7 @@ module.exports = {
   },
   plugins: [htmlWebpackPlugin],
   resolve: {
-    extensions: [".js", ".jsx"]
+    extensions: [".ts", ".tsx", ".js", ".jsx"]
   },
   devServer: {
     host: '0.0.0.0',

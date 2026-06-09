@@ -576,13 +576,19 @@ export default class GlslCanvas extends Component<Props, *> {
     ];
   };
 
+  toShaderPixelCoords = (clientX: number, clientY: number): [number, number] => {
+    const rect = this.canvas.getBoundingClientRect();
+    const dpr = this.props.devicePixelRatio ?? 1;
+    const x = (clientX - rect.left) * dpr;
+    const y = (rect.height - (clientY - rect.top)) * dpr;
+    return [x, y];
+  };
+
   mouseDown = (e) => {
     this.canvasPosition = this.canvas.getBoundingClientRect();
     const clientX = e.clientX || e.changedTouches[0].clientX;
     const clientY = e.clientY || e.changedTouches[0].clientY;
-    const mouseX = clientX - this.canvasPosition.left;
-    const mouseY =
-      this.canvasPosition.height - clientY - this.canvasPosition.top;
+    const [mouseX, mouseY] = this.toShaderPixelCoords(clientX, clientY);
     this.uniforms.iMouse.value[2] = mouseX;
     this.uniforms.iMouse.value[3] = mouseY;
     this.lastMouseArr[0] = mouseX;
@@ -594,9 +600,7 @@ export default class GlslCanvas extends Component<Props, *> {
     const { lerp = 1 } = this.props;
     const clientX = e.clientX || e.changedTouches[0].clientX;
     const clientY = e.clientY || e.changedTouches[0].clientY;
-    const mouseX = clientX - this.canvasPosition.left;
-    const mouseY =
-      this.canvasPosition.height - clientY - this.canvasPosition.top;
+    const [mouseX, mouseY] = this.toShaderPixelCoords(clientX, clientY);
     if (lerp !== 1) {
       this.lastMouseArr[0] = mouseX;
       this.lastMouseArr[1] = mouseY;

@@ -1,4 +1,3 @@
-export default `
 #define PI 3.1415926535898
 #define DEGTORAD PI / 180.
 
@@ -176,4 +175,4 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 	c = mix(c, vec3(.2, .1, .2), 1. - exp(-.001*t*t));// fog
 
 	fragColor = vec4(c, 1.0);
-}`;
+}

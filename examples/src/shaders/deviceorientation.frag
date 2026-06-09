@@ -1,4 +1,3 @@
-export default `
 #define PI 3.1415926535898
 #define DEGTORAD PI / 180.
 
@@ -108,4 +107,4 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 	fragColor = vec4(color,1.0);
 }
 
-`;
+

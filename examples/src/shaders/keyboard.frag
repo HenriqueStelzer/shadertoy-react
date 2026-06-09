@@ -1,4 +1,4 @@
-export default `// Created by inigo quilez - iq/2013
+// Created by inigo quilez - iq/2013
 
 // An example showing how to use the keyboard input.
 //
@@ -84,4 +84,4 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         texelFetch( iChannel0, ivec2(KEY_DOWN,2),0 ).x);
 
     fragColor = vec4(col,1.0);
-}`;
+}

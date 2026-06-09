@@ -9,9 +9,9 @@ Uniforms are injected into the shader **only when referenced** in the fragment s
 | `iTime` | `float` | Seconds since component mount |
 | `iTimeDelta` | `float` | Seconds since last frame |
 | `iFrame` | `int` | Frame index since mount |
-| `iResolution` | `vec2` | Canvas size in pixels |
+| `iResolution` | `vec2` | Canvas backing-store size in pixels (`CSS size × devicePixelRatio`) |
 | `iDate` | `vec4` | year, month, day, seconds in day |
-| `iMouse` | `vec4` | xy: position; zw: click position |
+| `iMouse` | `vec4` | xy: position; zw: click position (same pixel space as `iResolution` / `fragCoord`) |
 | `iChannel0`…`n` | `sampler2D` / `samplerCube` | Texture channels |
 | `iChannelResolution` | `vec3[]` | Per-channel resolution |
 | `iChannelTime` | `float[]` | Per-channel playback time |

@@ -94,6 +94,31 @@ const VERSION_SUMMARIES = {
 - README badges and shader-content license clarification
 
 `,
+  "2.1.0": `## Summary
+
+**Package:** \`glsl-helpers-react@2.1.0\` — demo fixes and \`iMouse\` coordinate correction
+
+### Fixes
+- \`iMouse\` uses backing-store pixels (CSS × \`devicePixelRatio\`), matching \`iResolution\` / \`fragCoord\`
+- Demo grid scroll discoverability (fade, cue, jump menu)
+
+### Docs
+- [uniforms.md](../uniforms.md) and [troubleshooting.md](../troubleshooting.md) — mouse pixel space
+
+`,
+  "2.1.1": `## Summary
+
+**Package:** \`glsl-helpers-react@2.1.1\` — examples refactor and playgrounds
+
+### Examples
+- Shaders as \`.frag\` files; TypeScript demo grid and tiles
+- Webpack/Babel TypeScript + \`.frag\` import support
+
+### Playground & deploy
+- \`sandbox/basic\` and \`sandbox/demos\` Vite templates
+- README Playground links; GitHub Pages \`homepage\` URL; CONTRIBUTING deploy steps
+
+`,
 };
 
 function escapeMarkdown(text) {
