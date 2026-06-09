@@ -1,4 +1,3 @@
-export default `
 // Created by inigo quilez - iq/2013
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
@@ -40,4 +39,4 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
 	fragColor = vec4( col, 1.0 );
 }
-`;
+

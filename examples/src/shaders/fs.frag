@@ -1,4 +1,3 @@
-export default `
 // @lsdlive
 
 // This was my shader for the shader showdown at Outline demoparty 2018 in Nederland.
@@ -104,4 +103,4 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 	c = mix(c, vec3(.2, .1, .2), 1. - exp(-.001*t*t));// fog
 
 	fragColor = vec4(c, 1.0);
-}`;
+}

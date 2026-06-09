@@ -1,4 +1,4 @@
-export default `#define PI 3.14159
+#define PI 3.14159
 
 float circle(vec2 uv, vec2 pos, float radius, float blur)
 {
@@ -45,4 +45,4 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     fragColor = col;
 }
 
-`;
+

@@ -1,10 +1,10 @@
 {
   "name": "glsl-helpers-react",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "description": "React GLSL canvas component with Shadertoy-compatible uniforms, WebGL2 support, and extended texture helpers. Fork of shadertoy-react.",
   "main": "lib/glsl-helpers-react.min.js",
   "types": "lib/index.d.ts",
-  "homepage": "https://github.com/HenriqueStelzer/glsl-helpers-react#readme",
+  "homepage": "https://henriquestelzer.github.io/glsl-helpers-react/",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve --mode development --config webpack.common.js",
@@ -32,6 +32,10 @@
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-flow": "^7.25.9",
     "@babel/preset-react": "^7.26.0",
+    "@babel/preset-typescript": "^7.26.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
     "babel-loader": "^9.2.1",
     "gh-pages": "^6.3.0",
     "html-webpack-plugin": "^5.6.3",

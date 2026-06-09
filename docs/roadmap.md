@@ -43,12 +43,12 @@ Public backlog for **glsl-helpers-react**, organized in **phases** (P0–P5). **
 | [2.0.1](changelog/2.0.1.md) | [ISSUES.md](#issuesmd) | Done |
 | [2.0.1](changelog/2.0.1.md) | [License naming clarification](#license-naming-clarification) | Done |
 | `2.0.1` | [Delete stale remote branches](#delete-stale-remote-branches) | Partial |
-| `2.1.0` | [Demo mouse, scaling, and upside-down output](#demo-mouse-scaling-and-upside-down-output) | Planned |
-| `2.1.0` | [Demo grid scroll discoverability](#demo-grid-scroll-discoverability) | Planned |
-| `2.1.1` | [README badges and Playground section](#readme-badges-and-playground) | Partial |
-| `2.1.1` | [Examples refactor (TSX + `.frag`)](#examples-refactor-tsx--frag) | Planned |
-| `2.1.1` | [CodeSandbox playground (like upstream)](#codesandbox-playground-like-upstream) | Planned |
-| `2.1.1` | [GitHub Pages demo deploy](#github-pages-demo-deploy) | Planned |
+| [2.1.0](changelog/2.1.0.md) | [Demo mouse, scaling, and upside-down output](#demo-mouse-scaling-and-upside-down-output) | Done |
+| [2.1.0](changelog/2.1.0.md) | [Demo grid scroll discoverability](#demo-grid-scroll-discoverability) | Done |
+| [2.1.1](changelog/2.1.1.md) | [README badges and Playground section](#readme-badges-and-playground) | Done |
+| [2.1.1](changelog/2.1.1.md) | [Examples refactor (TSX + `.frag`)](#examples-refactor-tsx--frag) | Done |
+| [2.1.1](changelog/2.1.1.md) | [CodeSandbox playground (like upstream)](#codesandbox-playground-like-upstream) | Done |
+| [2.1.1](changelog/2.1.1.md) | [GitHub Pages demo deploy](#github-pages-demo-deploy) | Done |
 | `2.1.2` | [Visual regression for examples](#visual-regression-for-examples) | Planned |
 | `2.1.3` | [SECURITY.md](#securitymd) | Planned |
 | `2.1.3` | [Deprecate `shadertoy-react-19` on npm](#deprecate-shadertoy-react-19-on-npm) | Planned |
@@ -271,13 +271,13 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 **Goal:** README header matches upstream polish — npm/size badges plus one-click links to key docs.
 
-**Status:** Doc badges and npm/size shields added; Playground links pending [CodeSandbox playground](#codesandbox-playground-like-upstream).
+**Status:** Done — badges and Playground links shipped in `2.1.1`.
 
 **Deliverables**
 
 - [x] npm version + gzip bundle size badges (like upstream)
 - [x] Shield badges for [roadmap](roadmap.md), [changelog](changelog/README.md), [migration-2.0](migration-2.0.md), [textures](textures.md), [multi-pass](multi-pass.md), [uniforms](uniforms.md), [troubleshooting](troubleshooting.md)
-- [ ] Playground section with live CodeSandbox URLs once sandboxes exist
+- [x] Playground section with live CodeSandbox URLs once sandboxes exist
 - [x] CONTRIBUTING / ISSUES badges when those files land (`2.0.1`)
 
 **Depends on:** CodeSandbox playground for live Playground links
@@ -288,15 +288,15 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 **Goal:** Split inline shader strings into maintainable `.frag` files and TypeScript/React tile components.
 
-**Why:** Today `examples/src/shaders/*.js` export GLSL as JS template strings; hard to syntax-highlight, reuse in CodeSandbox, or mirror production patterns (trade app uses `.frag` + TSX wrappers).
+**Status:** Done — `2.1.1`.
 
 **Deliverables**
 
-- One `.frag` (or `.glsl`) file per demo shader under `examples/src/shaders/`
-- TypeScript tile components (`.tsx`) importing frag via webpack raw-loader / `?raw`
-- Migrate `examples/src/index.jsx` → `index.tsx` (or keep entry JS with TS tiles)
-- Update webpack/babel for `.frag` imports and TS if needed
-- Sandboxes and [framework cookbooks](#framework-cookbooks) can copy the same import pattern
+- [x] One `.frag` file per demo shader under `examples/src/shaders/`
+- [x] TypeScript tile components (`examples/src/tiles/`) importing frag via webpack `asset/source`
+- [x] Migrate `examples/src/index.jsx` → `index.tsx`
+- [x] Webpack/babel TypeScript + `.frag` imports
+- [x] Sandboxes can copy the same import pattern
 
 **Depends on:** None
 
@@ -308,13 +308,15 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 **Why:** [mvilledieu/shadertoy-react](https://github.com/mvilledieu/shadertoy-react) README linked to live sandboxes ([Basic](https://codesandbox.io/s/ojllzxvww6), [Demos](https://codesandbox.io/s/434qm4x4w0)); fork README has no Playground links yet.
 
+**Status:** Done — `sandbox/basic` and `sandbox/demos` (Vite); README Playground links.
+
 **Deliverables**
 
-- **Basic** sandbox — minimal fullscreen `GlslCanvas` + one shader
-- **Demos** sandbox — textures, mouse, multi-pass, or a curated subset of the local grid
-- Port from upstream sandboxes where possible; use `glsl-helpers-react` + `GlslCanvas` (not legacy package name)
-- README [Playground](../README.md#playground) section with live links (see [README badges](#readme-badges-and-playground))
-- Consider StackBlitz mirrors where CodeSandbox limits apply
+- [x] **Basic** sandbox — minimal fullscreen `GlslCanvas` + one shader
+- [x] **Demos** sandbox — textures, mouse, multi-pass subset
+- [x] Uses `glsl-helpers-react` + `GlslCanvas` (not legacy package name)
+- [x] README [Playground](../README.md#playground) section with live links
+- [ ] StackBlitz mirrors (optional; deferred)
 
 **Depends on:** [Examples refactor (TSX + `.frag`)](#examples-refactor-tsx--frag) (recommended)
 
@@ -326,10 +328,13 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 **Why:** `package.json` `homepage` points at the fork; verify `npm run publish-demo` after 2.0 rebrand.
 
+**Status:** Done — `homepage` URL set; CONTRIBUTING documents deploy. Run `npm run publish-demo` locally to push `gh-pages`.
+
 **Deliverables**
 
-- Confirm `gh-pages` branch serves updated `examples/dist`
-- Document deploy steps in CONTRIBUTING.md
+- [x] `package.json` `homepage` → GitHub Pages URL
+- [x] Document deploy steps in CONTRIBUTING.md
+- [ ] Push updated `examples/dist` to `gh-pages` (requires local git credentials)
 
 **Depends on:** Demo fixes (`2.1.0`) recommended before promoting live demo
 

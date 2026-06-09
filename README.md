@@ -72,6 +72,15 @@ export default function App() {
 }
 ```
 
+## Playground
+
+Try `glsl-helpers-react` in the browser without cloning the repo:
+
+* [Basic](https://codesandbox.io/p/github/HenriqueStelzer/glsl-helpers-react/tree/main/sandbox/basic) — minimal fullscreen `GlslCanvas` + one `.frag` shader
+* [Demos](https://codesandbox.io/p/github/HenriqueStelzer/glsl-helpers-react/tree/main/sandbox/demos) — mouse, image texture, and multi-pass
+
+Source for both sandboxes lives under [`sandbox/`](sandbox/).
+
 ## Migration from shadertoy-react
 
 | Before | After |

@@ -1,15 +1,4 @@
-const BASE = "https://threejs.org/examples/textures/cube/Park2";
-
-export const cubeUrls = [
-  `${BASE}/posx.jpg`,
-  `${BASE}/negx.jpg`,
-  `${BASE}/posy.jpg`,
-  `${BASE}/negy.jpg`,
-  `${BASE}/posz.jpg`,
-  `${BASE}/negz.jpg`,
-];
-
-export default `void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec2 uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y;
   float t = iTime * 0.3;
   vec3 dir = normalize(vec3(uv, 1.0));
@@ -18,4 +7,4 @@ export default `void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   dir = mat3(cosT, 0.0, sinT, 0.0, 1.0, 0.0, -sinT, 0.0, cosT) * dir;
   vec3 col = texture(iChannel0, dir).rgb;
   fragColor = vec4(col, 1.0);
-}`;
+}

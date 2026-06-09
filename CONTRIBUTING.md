@@ -6,7 +6,7 @@ Thank you for helping improve **glsl-helpers-react**. This project is a maintain
 
 - Read the [README](README.md) and [roadmap](docs/roadmap.md) for scope.
 - For bug reports, see [ISSUES.md](ISSUES.md).
-- Package license: MIT — see [LICENSE](LICENSE). Shader examples in `examples/src/shaders/` may carry **separate** licenses (e.g. CC BY-NC-SA from Shadertoy); those do not change the npm package license.
+- Package license: MIT — see [LICENSE](LICENSE). Shader examples in `examples/src/shaders/*.frag` may carry **separate** licenses (e.g. CC BY-NC-SA from Shadertoy); those do not change the npm package license.
 
 ## Development setup
 
@@ -40,6 +40,23 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) as on `main`:
 - `chore:` — maintenance
 
 Example: `docs: add CONTRIBUTING workflow for 2.0.1`
+
+## Demo deploy (GitHub Pages)
+
+The live demo grid is served from the **`gh-pages`** branch at the [`homepage`](package.json) URL.
+
+When `examples/` changes and the demo should go live:
+
+```bash
+npm run publish-demo   # npm run build && gh-pages -d examples/dist
+```
+
+Requirements:
+
+- Write access to push the `gh-pages` branch on the fork
+- Run after merging example changes to `main` (or from a release branch before tagging)
+
+The `gh-pages` package uses a local git cache under `node_modules/.cache/gh-pages/`; if `npm ci` fails with `EBUSY` on that path, remove `node_modules` and reinstall.
 
 ## Before opening a PR
 

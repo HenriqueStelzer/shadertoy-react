@@ -54,3 +54,9 @@ const GlslCanvas = dynamic(() => import("glsl-helpers-react"), { ssr: false });
 
 - Unused uniforms skip listeners and GPU uploads — remove unused names from shader source.
 - Large shader recompiles on every `fs` change; debounce hot edits in dev tools.
+
+## Mouse position wrong on retina / scaled canvas
+
+- `iMouse` and `iResolution` use **backing-store pixels** (CSS layout size × `devicePixelRatio`), matching `fragCoord` and Shadertoy.
+- If mouse-driven shaders look offset, confirm `devicePixelRatio` on `GlslCanvas` matches the value used when sizing the canvas (default `1`).
+- Mouse coords account for canvas offset via `getBoundingClientRect`; nested scroll containers are handled on each move.
