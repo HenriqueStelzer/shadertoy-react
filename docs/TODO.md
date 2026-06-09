@@ -28,6 +28,7 @@ Shipped work is tracked in the [changelog](changelog/README.md) and README “Wh
 | P1 | [Custom GLSL examples](#p1-custom-glsl-oriented-examples) | Planned |
 | P1 | [Agent skills + npm installer](#p1-agent-skills--npm-installer) | Planned |
 | P1 | [CI on pull requests](#p1-ci-on-pull-requests) | Planned |
+| P1 | [Bundle size budget](#p1-bundle-size-budget) | Planned |
 | P1 | [GitHub Pages demo deploy](#p1-github-pages-demo-deploy) | Planned |
 | P1 | [Framework cookbooks](#p1-framework-cookbooks) | Planned |
 | P1 | [React Three Fiber bridge doc](#p1-react-three-fiber-bridge-doc) | Planned |
@@ -202,6 +203,28 @@ Shipped work is tracked in the [changelog](changelog/README.md) and README “Wh
 - Optional: fail if `npm run changelog` produces a dirty tree when version bumps change
 
 **Depends on:** None
+
+---
+
+### P1: Bundle size budget
+
+**Goal:** Keep `lib/glsl-helpers-react.min.js` small enough to be a credible “lightweight Shadertoy helper” and enforce that in CI.
+
+**Baseline (2026-06):** ~41 KB minified, ~11 KB gzip. Target after audit: ≤ ~32 KB min / ≤ ~9 KB gzip (stretch: ~30 KB / ~8 KB).
+
+**Deliverables**
+
+- Document baseline + breakdown in README or `docs/performance.md`
+- CI guardrail (`size-limit` or `bundlesize`) on `lib/glsl-helpers-react.min.js` — fail PRs over budget without override
+- Quick wins without API breaks: dedupe shader preprocess strings, lazy-load optional modules (`persistentTime`, `KeyboardTexture`, multi-pass paths), cache uniform locations
+- Optional later: `glsl-helpers-react/core` entry for minimal single-pass use (~6–8 KB gzip)
+- README: realistic size note (“~X KB gzip, excl. React”)
+
+**Out of scope:** Example app bundle (~270 KB with React/styled-components).
+
+**Depends on:** Release 2.0.0 stable API (before splitting entry points)
+
+**Milestone:** 2.0.1 or 2.1.0
 
 ---
 
