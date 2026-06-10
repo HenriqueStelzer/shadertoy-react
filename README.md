@@ -79,25 +79,25 @@ export default function App() {
 
 One shader, zero clone — edit an annotated `.frag` in the browser (Shadertoy syntax, built-in uniforms, `iPersistentTime`).
 
-* [Open in StackBlitz](https://stackblitz.com/github/HenriqueStelzer/glsl-helpers-react/tree/main/sandbox/playground)
+* [Open in StackBlitz](https://stackblitz.com/github/HenriqueStelzer/glsl-helpers-react/tree/test/sandbox-playground/sandbox/playground)
 
 Source: [`sandbox/playground`](sandbox/playground/)
 
 ## Demo
 
-Full **15-tile demo grid** deployed on GitHub Pages (mouse, textures, multi-pass, camera, keyboard, …).
+Full **15-tile demo grid** (expanded from [upstream `examples/`](https://github.com/mvilledieu/shadertoy-react/tree/master/examples)) — mouse, textures, multi-pass, camera, keyboard, …
 
 * [Live demo](https://henriquestelzer.github.io/glsl-helpers-react/)
 
-Deploy after `examples/` changes: `npm run publish-demo` (see [CONTRIBUTING](CONTRIBUTING.md#demo-deploy-github-pages)).
+Deploy after `examples/` changes: `npm run publish-demo` (see [CONTRIBUTING](CONTRIBUTING.md#demo-deploy-github-pages)). Run locally: `npm start` in the repo root.
 
 ## Demo sandbox
 
-Six-tile browser sandbox — same layout as [upstream shadertoy-react Demos](https://github.com/mvilledieu/shadertoy-react/tree/master/examples) (textures, mouse, clock, orientation, classic GLSL, custom uniforms).
+Fullscreen router demo matching [upstream CodeSandbox Demos](https://codesandbox.io/s/434qm4x4w0) — **+ More** menu, one shader per route (Basic, Textures, Custom Uniforms, built-in uniform showcases).
 
-* [Open in StackBlitz](https://stackblitz.com/github/HenriqueStelzer/glsl-helpers-react/tree/main/sandbox/demo-sandbox)
+* [Open in StackBlitz](https://stackblitz.com/github/HenriqueStelzer/glsl-helpers-react/tree/test/sandbox-playground/sandbox/demo-sandbox)
 
-Source: [`sandbox/demo-sandbox`](sandbox/demo-sandbox/). To hack on the **full** grid locally: `npm start` in the repo root ([`examples/`](examples/)).
+Source: [`sandbox/demo-sandbox`](sandbox/demo-sandbox/)
 
 ## Migration from shadertoy-react
 
