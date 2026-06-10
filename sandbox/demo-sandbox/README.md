@@ -21,3 +21,5 @@ LOCAL_GLSL_LIB=1 npm run dev
 ```
 
 StackBlitz and default `npm run dev` always use the npm package.
+
+**Textures upside down?** Image channels may render flipped depending on the npm build; pass `flipY: 1` on the texture prop or see [textures.md](../../docs/textures.md).

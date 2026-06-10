@@ -45,12 +45,13 @@ export function BasicPage() {
   return <GlslCanvas fs={basic} />;
 }
 
+// Hint: image upside down? Add `flipY: 1` on the texture (see docs/textures.md).
 export function TexturesPage() {
   return (
     <GlslCanvas
       fs={fsImages}
       precision="highp"
-      textures={[{ url: TEXTURE_URL, flipY: 1 }]}
+      textures={[{ url: TEXTURE_URL }]}
     />
   );
 }
@@ -75,7 +76,7 @@ export function ChannelResolutionPage() {
   return (
     <GlslCanvas
       fs={channelResolution}
-      textures={[{ url: TEXTURE_URL, flipY: 1 }]}
+      textures={[{ url: TEXTURE_URL }]}
     />
   );
 }
