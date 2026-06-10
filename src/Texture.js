@@ -14,6 +14,9 @@ export const ClampToEdgeWrapping = 33071;
 export const MirroredRepeatWrapping = 33648;
 export const RepeatWrapping = 10497;
 
+/** WebGL only accepts 0/1 for UNPACK_FLIP_Y_WEBGL; legacy `-1` default must not be passed raw. */
+const toGlFlipY = (flipY) => (flipY === false || flipY === 0 ? 0 : 1);
+
 const isPowerOf2 = (value: number) => (value & (value - 1)) === 0;
 const floorPowerOfTwo = (value: number) =>
   2 ** Math.floor(Math.log(value) / Math.LN2);
@@ -123,7 +126,7 @@ export default class Texture {
     const srcFormat = gl.RGBA;
     const srcType = gl.UNSIGNED_BYTE;
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, toGlFlipY(flipY));
     gl.texImage2D(
       gl.TEXTURE_2D,
       level,
@@ -249,7 +252,7 @@ export default class Texture {
       height,
       data,
       format = "rgba8",
-      flipY = -1,
+      flipY,
       wrapS,
       wrapT,
       minFilter,
@@ -272,7 +275,7 @@ export default class Texture {
 
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, toGlFlipY(flipY));
 
     if (format === "rgba32f") {
       if (!isWebGL2(gl) && !gl.getExtension("OES_texture_float")) {
@@ -439,7 +442,7 @@ export default class Texture {
 
   loadImage = (url: string, textureArgs: TextureType) => {
     const { gl } = this;
-    const { wrapS, wrapT, minFilter, magFilter, flipY = -1 } = textureArgs;
+    const { wrapS, wrapT, minFilter, magFilter, flipY } = textureArgs;
 
     return new Promise((resolve, reject) => {
       const image = new Image();
@@ -465,7 +468,7 @@ export default class Texture {
       }
 
       gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, toGlFlipY(flipY));
       gl.texImage2D(
         gl.TEXTURE_2D,
         0,
@@ -522,7 +525,7 @@ export default class Texture {
       wrapT,
       minFilter,
       magFilter,
-      flipY = -1,
+      flipY,
     } = textureArgs;
 
     const kind = getTextureKind(textureArgs);

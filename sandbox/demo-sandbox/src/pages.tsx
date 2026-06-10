@@ -50,7 +50,7 @@ export function TexturesPage() {
     <GlslCanvas
       fs={fsImages}
       precision="highp"
-      textures={[{ url: TEXTURE_URL }]}
+      textures={[{ url: TEXTURE_URL, flipY: 1 }]}
     />
   );
 }
@@ -75,7 +75,7 @@ export function ChannelResolutionPage() {
   return (
     <GlslCanvas
       fs={channelResolution}
-      textures={[{ url: TEXTURE_URL }]}
+      textures={[{ url: TEXTURE_URL, flipY: 1 }]}
     />
   );
 }
