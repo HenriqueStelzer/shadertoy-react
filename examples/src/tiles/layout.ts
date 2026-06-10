@@ -68,9 +68,14 @@ export const ScrollFade = styled.div<{ $visible: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  height: 80px;
+  height: 120px;
   pointer-events: none;
-  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.6));
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(0, 0, 0, 0.45) 40%,
+    rgba(0, 0, 0, 0.85)
+  );
   z-index: 10;
   opacity: ${(props) => (props.$visible ? 1 : 0)};
   transition: opacity 300ms ease;
@@ -78,16 +83,31 @@ export const ScrollFade = styled.div<{ $visible: boolean }>`
 
 export const ScrollCue = styled.div<{ $visible: boolean }>`
   position: fixed;
-  bottom: 18px;
+  bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 11;
-  font: 12px/1.4 sans-serif;
-  color: rgba(255, 255, 255, 0.9);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  font: 13px/1.4 sans-serif;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
   pointer-events: none;
   opacity: ${(props) => (props.$visible ? 1 : 0)};
   transition: opacity 300ms ease;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: ${(props) => (props.$visible ? "scrollCueBounce 2s ease-in-out infinite" : "none")};
+  }
+
+  @keyframes scrollCueBounce {
+    0%,
+    100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    50% {
+      transform: translateX(-50%) translateY(6px);
+    }
+  }
 `;
 
 export const JumpNav = styled.nav`
