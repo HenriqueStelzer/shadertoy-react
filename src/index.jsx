@@ -310,18 +310,17 @@ export default class GlslCanvas extends Component<Props, *> {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
-    this.canvas.height = this.canvas.clientHeight;
-    this.canvas.width = this.canvas.clientWidth;
-    gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-
     this.framebufferPool = new FramebufferPool(gl);
     this.resetUniforms();
     this.processCustomUniforms();
     this.processTextures();
-    this.compileShaders();
     this.initBuffers();
     this.addEventListeners();
     this.onResize();
+    const hasTextures = (this.props.textures || []).length > 0;
+    if (!hasTextures) {
+      this.compileShaders();
+    }
     this.drawScene();
   };
 
@@ -544,6 +543,10 @@ export default class GlslCanvas extends Component<Props, *> {
       );
     }
     window.addEventListener("resize", this.onResize, options);
+    if (typeof ResizeObserver !== "undefined") {
+      this.resizeObserver = new ResizeObserver(this.onResize);
+      this.resizeObserver.observe(this.canvas);
+    }
   };
 
   removeEventListeners = () => {
@@ -565,6 +568,10 @@ export default class GlslCanvas extends Component<Props, *> {
       );
     }
     window.removeEventListener("resize", this.onResize, options);
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
   };
 
   onDeviceOrientationChange = ({ alpha, beta, gamma }) => {
@@ -578,9 +585,10 @@ export default class GlslCanvas extends Component<Props, *> {
 
   toShaderPixelCoords = (clientX: number, clientY: number): [number, number] => {
     const rect = this.canvas.getBoundingClientRect();
-    const dpr = this.props.devicePixelRatio ?? 1;
-    const x = (clientX - rect.left) * dpr;
-    const y = (rect.height - (clientY - rect.top)) * dpr;
+    const scaleX = this.canvas.width / rect.width;
+    const scaleY = this.canvas.height / rect.height;
+    const x = (clientX - rect.left) * scaleX;
+    const y = (rect.height - (clientY - rect.top)) * scaleY;
     return [x, y];
   };
 
@@ -615,17 +623,22 @@ export default class GlslCanvas extends Component<Props, *> {
     this.uniforms.iMouse.value[3] = 0;
   };
 
-  onResize = () => {
+  syncCanvasSize = () => {
     const { gl } = this;
     if (!gl || !this.canvas) return;
     const { devicePixelRatio = 1 } = this.props;
     this.canvasPosition = this.canvas.getBoundingClientRect();
-    const displayWidth = Math.floor(this.canvasPosition.width * devicePixelRatio);
-    const displayHeight = Math.floor(
-      this.canvasPosition.height * devicePixelRatio
+    const displayWidth = Math.max(
+      1,
+      Math.round(this.canvasPosition.width * devicePixelRatio)
+    );
+    const displayHeight = Math.max(
+      1,
+      Math.round(this.canvasPosition.height * devicePixelRatio)
     );
     gl.canvas.width = displayWidth;
     gl.canvas.height = displayHeight;
+    gl.viewport(0, 0, displayWidth, displayHeight);
 
     if (this.uniforms.iResolution && this.uniforms.iResolution.isNeeded && this.shaderProgram) {
       const rUniform = gl.getUniformLocation(this.shaderProgram, UNIFORM_RESOLUTION);
@@ -635,6 +648,10 @@ export default class GlslCanvas extends Component<Props, *> {
     if (this.texturesArr.some((t) => t.textureArgs && t.textureArgs.srcSet)) {
       this.reloadSrcSetTextures();
     }
+  };
+
+  onResize = () => {
+    this.syncCanvasSize();
   };
 
   advanceFrameClock = (timestamp: number) => {
@@ -814,12 +831,13 @@ export default class GlslCanvas extends Component<Props, *> {
     if (passes && passes.length > 0) {
       this.disposePassPrograms();
       this.passPrograms = passes.map((pass) => {
-        const channelOffset = (pass.inputs || []).length;
+        const inputCount = (pass.inputs || []).length;
         const shaders = this.preProcessShaders(
           pass.fs,
           vs || defaultVs,
           pass.fs,
-          channelOffset
+          inputCount,
+          inputCount
         );
         return this.linkProgram(shaders.fs, shaders.vs);
       });
@@ -929,6 +947,7 @@ export default class GlslCanvas extends Component<Props, *> {
       })
       .catch((e) => {
         console.error(e);
+        if (!isUpdate) this.compileShaders();
         if (onDoneLoadingTextures) onDoneLoadingTextures();
       });
   };
@@ -937,7 +956,8 @@ export default class GlslCanvas extends Component<Props, *> {
     fs: string,
     vs: string,
     uniformSource: string,
-    channelOffset: number = 0
+    channelOffset: number = 0,
+    inputChannelCount: number = 0
   ) => {
     const { precision, devicePixelRatio = 1, defines } = this.props;
 
@@ -989,6 +1009,17 @@ export default class GlslCanvas extends Component<Props, *> {
       : fsString.indexOf(fs) >= 0
       ? fsString.indexOf(fs)
       : fsString.length;
+
+    for (let i = 0; i < inputChannelCount; i++) {
+      const channelName = `${UNIFORM_CHANNEL}${i}`;
+      if (uniformSource.includes(channelName)) {
+        fsString = insertStringAtIndex(
+          fsString,
+          `uniform sampler2D ${channelName}; \n`,
+          uniformInsertIndex
+        );
+      }
+    }
 
     Object.keys(this.uniforms).forEach((uniform) => {
       if (!uniformMatchesSource(uniform, uniformSource, channelOffset)) return;
@@ -1157,6 +1188,7 @@ export default class GlslCanvas extends Component<Props, *> {
   lastTime: number = 0;
   passPrograms: Array<?WebGLProgram> = [];
   framebufferPool: ?FramebufferPool = null;
+  resizeObserver: ?ResizeObserver = null;
 
   render = () => {
     const { style } = this.props;
