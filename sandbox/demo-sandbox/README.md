@@ -14,4 +14,10 @@ npm install
 npm run dev
 ```
 
-Local library dev (repo checkout only): run `npm run transpile` at the repo root — Vite picks up `lib/glsl-helpers-react.min.js` when it exists. StackBlitz and standalone sandboxes use the npm package.
+Local library dev (repo checkout only): `npm run transpile` at the repo root, then:
+
+```bash
+LOCAL_GLSL_LIB=1 npm run dev
+```
+
+StackBlitz and default `npm run dev` always use the npm package.
