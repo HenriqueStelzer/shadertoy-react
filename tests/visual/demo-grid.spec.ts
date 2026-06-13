@@ -14,53 +14,73 @@ function trackGlslErrors(page: Page): string[] {
   return errors;
 }
 
-async function waitForCanvasPixels(page: Page, id: DemoId): Promise<void> {
+async function waitForCanvasLayout(page: Page, id: DemoId): Promise<void> {
+  await page.waitForSelector(`#${id} canvas`, { state: "visible" });
   await page.waitForFunction(
     (tileId) => {
       const canvas = document.querySelector(`#${tileId} canvas`);
-      if (!canvas || canvas.clientWidth < 8 || canvas.clientHeight < 8) {
-        return false;
-      }
-      const gl =
-        canvas.getContext("webgl2") ?? canvas.getContext("webgl");
-      if (!gl) return false;
-      const pixels = new Uint8Array(4);
-      gl.readPixels(
-        (canvas.width / 2) | 0,
-        (canvas.height / 2) | 0,
-        1,
-        1,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        pixels,
+      return (
+        !!canvas &&
+        canvas.clientWidth >= 8 &&
+        canvas.clientHeight >= 8 &&
+        canvas.width >= 8 &&
+        canvas.height >= 8
       );
-      return pixels[0] + pixels[1] + pixels[2] > 12;
     },
     id,
     { timeout: 15_000 },
   );
 }
 
-async function settleTile(page: Page, id: DemoId): Promise<void> {
-  await page.goto(`/#${id}`);
-  await page.locator(`#${id}`).scrollIntoViewIfNeeded();
-  await page.waitForSelector(`#${id} canvas`, { state: "visible" });
-  await waitForCanvasPixels(page, id);
+const SETTLE_MS: Partial<Record<DemoId, number>> = {
+  "demo-image-fade": 3000,
+  "demo-mouse": 2000,
+  "demo-clock": 2500,
+  "demo-basic": 2500,
+  "demo-persistent-time": 2500,
+  "demo-uniforms": 2500,
+  "demo-data-texture": 2500,
+  "demo-cube": 2500,
+};
 
-  if (id === "demo-image-fade") {
-    await page.waitForTimeout(2500);
-  } else if (id === "demo-mouse") {
-    const canvas = page.locator(`#${id} canvas`);
-    const box = await canvas.boundingBox();
-    if (box) {
-      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+async function prepareTile(page: Page, id: DemoId): Promise<void> {
+  switch (id) {
+    case "demo-image-fade":
+      await page.waitForFunction(
+        (tileId) => {
+          const tile = document.getElementById(tileId);
+          if (!tile) return false;
+          return parseFloat(window.getComputedStyle(tile).opacity) > 0.9;
+        },
+        id,
+        { timeout: 30_000 },
+      );
+      break;
+    case "demo-mouse": {
+      const canvas = page.locator(`#${id} canvas`);
+      const box = await canvas.boundingBox();
+      if (box) {
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.mouse.down();
+      }
+      break;
     }
-    await page.waitForTimeout(1000);
-  } else if (id === "demo-basic") {
-    await page.waitForTimeout(2500);
-  } else {
-    await page.waitForTimeout(1500);
+    case "demo-keyboard":
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("ArrowUp");
+      break;
+    default:
+      break;
   }
+}
+
+async function settleTile(page: Page, id: DemoId): Promise<void> {
+  // One WebGL context per test — avoids Chrome's ~16-context limit on the full grid.
+  await page.goto(`/?solo=${id}#${id}`);
+  await page.locator(`#${id}`).scrollIntoViewIfNeeded();
+  await waitForCanvasLayout(page, id);
+  await prepareTile(page, id);
+  await page.waitForTimeout(SETTLE_MS[id] ?? 2000);
 }
 
 /** Single-frame capture — avoids Playwright stability retries on animated WebGL. */
@@ -73,12 +93,14 @@ async function expectTileSnapshot(page: Page, id: DemoId): Promise<void> {
 
 for (const { id, label } of DEMO_LINKS) {
   test(`demo tile: ${label}`, async ({ page }) => {
-    if (id === "demo-camera" && process.env.CI) {
+    if (id === "demo-camera" && !process.env.PLAYWRIGHT_CAMERA) {
       test.skip();
     }
 
+    const errors = trackGlslErrors(page);
     await settleTile(page, id);
     await expectTileSnapshot(page, id);
+    expect(errors, `shader errors on #${id}`).toEqual([]);
   });
 }
 

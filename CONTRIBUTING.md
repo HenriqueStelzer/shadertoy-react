@@ -70,8 +70,9 @@ npm run test:visual:update        # refresh snapshots after intentional visual c
 ```
 
 - Fixed viewport: **1440×900**, `deviceScaleFactor: 1`
+- Per-tile tests use `/?solo=demo-*` (one WebGL context each; full grid still used for scroll/backing-store tests)
 - Animated tiles (`clock`, `custom uniforms`, `mouse`, etc.) use higher pixel-diff tolerance
-- **`demo-camera`** is skipped in CI (requires `getUserMedia` permission)
+- **`demo-camera`** is skipped unless `PLAYWRIGHT_CAMERA=1` (requires `getUserMedia` permission)
 - GPU/driver variance: if a snapshot fails only on CI, inspect the diff artifact; minor shader noise may need a slightly higher `maxDiffPixelRatio` for that tile
 
 See also `.cursor/skills/visual-regression/SKILL.md` for manual browser review.

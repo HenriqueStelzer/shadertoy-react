@@ -8,6 +8,8 @@ import {
   Page,
   ScrollCue,
   ScrollFade,
+  getSoloTileId,
+  isTileVisible,
 } from "./tiles/layout";
 import {
   BasicTile,
@@ -78,39 +80,46 @@ class App extends Component<object, AppState> {
 
   render() {
     const { showScrollCue, fadeIn, textureUrl, val } = this.state;
+    const solo = getSoloTileId();
 
     return (
       <Page>
-        <JumpNav aria-label="Demo index">
-          <strong>Demos</strong>
-          {DEMO_LINKS.map(({ id, label }) => (
-            <a key={id} href={`#${id}`}>
-              {label}
-            </a>
-          ))}
-        </JumpNav>
-        <ScrollFade $visible={showScrollCue} aria-hidden="true" />
-        <ScrollCue $visible={showScrollCue}>Scroll for more demos ↓</ScrollCue>
+        {!solo && (
+          <>
+            <JumpNav aria-label="Demo index">
+              <strong>Demos</strong>
+              {DEMO_LINKS.map(({ id, label }) => (
+                <a key={id} href={`#${id}`}>
+                  {label}
+                </a>
+              ))}
+            </JumpNav>
+            <ScrollFade $visible={showScrollCue} aria-hidden="true" />
+            <ScrollCue $visible={showScrollCue}>Scroll for more demos ↓</ScrollCue>
+          </>
+        )}
         <Container>
-          <ImageFadeTile
-            textureUrl={textureUrl}
-            fadeIn={fadeIn}
-            onLoaded={() => this.setState({ fadeIn: true })}
-          />
-          <MouseTile />
-          <ClockTile />
-          <DeviceOrientationTile />
-          <CustomUniformsTile val={val} />
-          <ClassicSyntaxTile />
-          <KeyboardTile />
-          <MultiPassTile />
-          <PersistentTimeTile />
-          <CameraTile />
-          <DataTextureTile />
-          <CubeTile />
-          <SrcSetTile />
-          <DeprecatedTile />
-          <BasicTile />
+          {isTileVisible("demo-image-fade") && (
+            <ImageFadeTile
+              textureUrl={textureUrl}
+              fadeIn={fadeIn}
+              onLoaded={() => this.setState({ fadeIn: true })}
+            />
+          )}
+          {isTileVisible("demo-mouse") && <MouseTile />}
+          {isTileVisible("demo-clock") && <ClockTile />}
+          {isTileVisible("demo-orientation") && <DeviceOrientationTile />}
+          {isTileVisible("demo-uniforms") && <CustomUniformsTile val={val} />}
+          {isTileVisible("demo-classic") && <ClassicSyntaxTile />}
+          {isTileVisible("demo-keyboard") && <KeyboardTile />}
+          {isTileVisible("demo-multipass") && <MultiPassTile />}
+          {isTileVisible("demo-persistent-time") && <PersistentTimeTile />}
+          {isTileVisible("demo-camera") && <CameraTile />}
+          {isTileVisible("demo-data-texture") && <DataTextureTile />}
+          {isTileVisible("demo-cube") && <CubeTile />}
+          {isTileVisible("demo-srcset") && <SrcSetTile />}
+          {isTileVisible("demo-deprecated") && <DeprecatedTile />}
+          {isTileVisible("demo-basic") && <BasicTile />}
           <GlobalStyle />
         </Container>
       </Page>

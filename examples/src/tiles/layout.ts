@@ -1,5 +1,16 @@
 import styled, { createGlobalStyle } from "styled-components";
 
+/** When `?solo=demo-*` is set, only that tile mounts (used by Playwright visual tests). */
+export function getSoloTileId(): string | null {
+  if (typeof window === "undefined") return null;
+  return new URLSearchParams(window.location.search).get("solo");
+}
+
+export function isTileVisible(tileId: string): boolean {
+  const solo = getSoloTileId();
+  return !solo || solo === tileId;
+}
+
 export const DEMO_LINKS = [
   { id: "demo-image-fade", label: "image + fade in" },
   { id: "demo-mouse", label: "mouse" },
