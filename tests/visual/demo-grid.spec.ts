@@ -83,8 +83,23 @@ async function settleTile(page: Page, id: DemoId): Promise<void> {
   await page.waitForTimeout(SETTLE_MS[id] ?? 2000);
 }
 
+async function assertTileGridSize(page: Page, id: DemoId): Promise<void> {
+  await page.waitForFunction(
+    (tileId) => {
+      const tile = document.getElementById(tileId);
+      if (!tile) return false;
+      const { width } = tile.getBoundingClientRect();
+      // Grid cell ≈ viewport/3; full-row solo stretch is ~3× wider.
+      return width > 0 && width <= window.innerWidth * 0.38;
+    },
+    id,
+    { timeout: 5_000 },
+  );
+}
+
 /** Single-frame capture — avoids Playwright stability retries on animated WebGL. */
 async function expectTileSnapshot(page: Page, id: DemoId): Promise<void> {
+  await assertTileGridSize(page, id);
   const screenshot = await page.locator(`#${id}`).screenshot();
   expect(screenshot).toMatchSnapshot(`${id}.png`, {
     maxDiffPixelRatio: screenshotTolerance(id),

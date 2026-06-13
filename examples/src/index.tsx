@@ -55,16 +55,28 @@ class App extends Component<object, AppState> {
   }
 
   componentDidMount() {
+    this.syncSoloAttr();
     this.updateScrollHint();
     window.addEventListener("scroll", this.onScroll, { passive: true });
     window.addEventListener("resize", this.updateScrollHint);
+  }
+
+  componentDidUpdate() {
+    this.syncSoloAttr();
   }
 
   componentWillUnmount() {
     if (this._tickId) clearInterval(this._tickId);
     window.removeEventListener("scroll", this.onScroll);
     window.removeEventListener("resize", this.updateScrollHint);
+    delete document.documentElement.dataset.soloTile;
   }
+
+  syncSoloAttr = () => {
+    const solo = getSoloTileId();
+    if (solo) document.documentElement.dataset.soloTile = solo;
+    else delete document.documentElement.dataset.soloTile;
+  };
 
   updateScrollHint = () => {
     const scrollable =
@@ -81,6 +93,8 @@ class App extends Component<object, AppState> {
   render() {
     const { showScrollCue, fadeIn, textureUrl, val } = this.state;
     const solo = getSoloTileId();
+    if (solo) document.documentElement.dataset.soloTile = solo;
+    else delete document.documentElement.dataset.soloTile;
 
     return (
       <Page>
@@ -98,7 +112,7 @@ class App extends Component<object, AppState> {
             <ScrollCue $visible={showScrollCue}>Scroll for more demos ↓</ScrollCue>
           </>
         )}
-        <Container $solo={!!solo}>
+        <Container>
           {isTileVisible("demo-image-fade") && (
             <ImageFadeTile
               textureUrl={textureUrl}

@@ -38,28 +38,25 @@ export const GlobalStyle = createGlobalStyle`
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     scroll-behavior: smooth;
   }
+
+  /* Playwright ?solo= — Parent flex-grow:1 otherwise wins (styled-components order). */
+  html[data-solo-tile] [id^="demo-"] {
+    flex-grow: 0 !important;
+    flex-shrink: 0 !important;
+    width: calc(100vw / 3) !important;
+    height: calc(100vh / 3) !important;
+    max-width: calc(100vw / 3) !important;
+  }
 `;
 
 export const Page = styled.div`
   position: relative;
 `;
 
-export const Container = styled.div<{ $solo?: boolean }>`
+export const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-
-  /* Playwright solo mode: one tile must not flex-grow to full row width. */
-  ${(props) =>
-    props.$solo &&
-    `
-    & > * {
-      flex-grow: 0;
-      flex-shrink: 0;
-      width: calc(100vw / 3);
-      height: calc(100vh / 3);
-    }
-  `}
 `;
 
 export const Parent = styled.div`
