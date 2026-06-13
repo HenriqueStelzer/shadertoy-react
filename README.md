@@ -13,6 +13,9 @@
 [![troubleshooting](https://img.shields.io/badge/docs-troubleshooting-0969da)](docs/troubleshooting.md)
 [![contributing](https://img.shields.io/badge/docs-contributing-0969da)](CONTRIBUTING.md)
 [![issues](https://img.shields.io/badge/docs-issues-0969da)](ISSUES.md)
+[![playground](https://img.shields.io/badge/playground-stackblitz-0969da)](#playground)
+[![demo](https://img.shields.io/badge/demo-live-0969da)](#demo)
+[![demo sandbox](https://img.shields.io/badge/demo--sandbox-local-0969da)](#demo-sandbox)
 
 **React GLSL canvas with Shadertoy-compatible uniforms and extended helpers.**
 
@@ -74,12 +77,27 @@ export default function App() {
 
 ## Playground
 
-Try `glsl-helpers-react` in the browser without cloning the repo:
+One shader, zero clone — edit an annotated `.frag` in the browser (Shadertoy syntax, built-in uniforms, `iPersistentTime`).
 
-* [Basic](https://codesandbox.io/p/github/HenriqueStelzer/glsl-helpers-react/tree/main/sandbox/basic) — minimal fullscreen `GlslCanvas` + one `.frag` shader
-* [Demos](https://codesandbox.io/p/github/HenriqueStelzer/glsl-helpers-react/tree/main/sandbox/demos) — mouse, image texture, and multi-pass
+* [Open in StackBlitz](https://stackblitz.com/github/HenriqueStelzer/glsl-helpers-react/tree/test/sandbox-playground/sandbox/playground)
 
-Source for both sandboxes lives under [`sandbox/`](sandbox/).
+Source: [`sandbox/playground`](sandbox/playground/)
+
+## Demo
+
+Full **15-tile demo grid** (expanded from [upstream `examples/`](https://github.com/mvilledieu/shadertoy-react/tree/master/examples)) — mouse, textures, multi-pass, camera, keyboard, …
+
+* [Live demo](https://henriquestelzer.github.io/glsl-helpers-react/)
+
+Deploy after `examples/` changes: `npm run publish-demo` (see [CONTRIBUTING](CONTRIBUTING.md#demo-deploy-github-pages)). Run locally: `npm start` in the repo root.
+
+## Demo sandbox
+
+Fullscreen router demo matching [upstream CodeSandbox Demos](https://codesandbox.io/s/434qm4x4w0) — **+ More** menu, one shader per route (Basic, Textures, Custom Uniforms, built-in uniform showcases).
+
+* [Open in StackBlitz](https://stackblitz.com/github/HenriqueStelzer/glsl-helpers-react/tree/test/sandbox-playground/sandbox/demo-sandbox)
+
+Source: [`sandbox/demo-sandbox`](sandbox/demo-sandbox/)
 
 ## Migration from shadertoy-react
 
@@ -214,14 +232,6 @@ Each pass renders to an internal framebuffer (`target`) or to the screen (last p
 ### WebGL2 / GLSL 3.00
 
 Set `webgl="2"` or `webgl="auto"` (default). Shadertoy syntax is rewritten automatically (`gl_FragColor` → `fragColor`, `texture2D` → `texture`). You can also author shaders with `#version 300 es` directly.
-
-## Playground
-
-Live CodeSandbox templates (like [upstream shadertoy-react](https://github.com/mvilledieu/shadertoy-react#playground)) are planned — see [roadmap](docs/roadmap.md#codesandbox-playground-like-upstream). Until then, run the local demo grid below.
-
-## Examples
-
-Run `npm start` and open the demo grid (**scroll down** — tiles extend below the first viewport). Includes: basic shader, mouse, clock, device orientation, custom uniforms, WebGL2 syntax, keyboard, multi-pass, persistent time, camera, data texture, cube map, and `srcSet` density.
 
 ## How it works
 

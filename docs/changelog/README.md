@@ -23,6 +23,7 @@ Only published npm versions are listed. Intermediate semver numbers (1.0.1, 1.0.
 | 2.0.1 | 2026-06-09 | — | [2.0.1.md](./2.0.1.md) |
 | 2.1.0 | 2026-06-09 | — | [2.1.0.md](./2.1.0.md) |
 | 2.1.1 | 2026-06-09 | — | [2.1.1.md](./2.1.1.md) |
+| 2.1.2 | 2026-06-09 | — | [2.1.2.md](./2.1.2.md) |
 
 **Total commits:** 119
 

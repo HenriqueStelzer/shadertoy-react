@@ -14,7 +14,7 @@ Thank you for helping improve **glsl-helpers-react**. This project is a maintain
 git clone https://github.com/HenriqueStelzer/glsl-helpers-react.git
 cd glsl-helpers-react
 npm install
-npm start          # local demo grid
+npm start          # local demo sandbox (demo grid at :3001)
 ```
 
 ## Branch naming
@@ -58,19 +58,40 @@ Requirements:
 
 The `gh-pages` package uses a local git cache under `node_modules/.cache/gh-pages/`; if `npm ci` fails with `EBUSY` on that path, remove `node_modules` and reinstall.
 
+## Visual regression (Playwright)
+
+Per-tile screenshot baselines live in `tests/visual/`. Requires Chromium (installed via Playwright).
+
+```bash
+npm run build
+npx playwright install chromium   # first time only
+npm run test:visual               # compare against baselines
+npm run test:visual:update        # refresh snapshots after intentional visual changes
+```
+
+- Fixed viewport: **1280×720**, `deviceScaleFactor: 1` (tile screenshots ≈ 427×240, one-third of viewport)
+- Per-tile tests use `/?solo=demo-*` (one WebGL context each; full grid still used for scroll/backing-store tests)
+- Animated tiles (`clock`, `custom uniforms`, `mouse`, etc.) use higher pixel-diff tolerance
+- **`demo-camera`** is skipped unless `PLAYWRIGHT_CAMERA=1` (requires `getUserMedia` permission)
+- GPU/driver variance: if a snapshot fails only on CI, inspect the diff artifact; minor shader noise may need a slightly higher `maxDiffPixelRatio` for that tile
+
+See also `.cursor/skills/visual-regression/SKILL.md` for manual browser review.
+
 ## Before opening a PR
 
 1. **`npm run transpile`** — rebuild `lib/glsl-helpers-react.min.js`
 2. **`npm run build`** — rebuild examples when `examples/` changes
-3. **`npm run changelog`** — when bumping `package.json` version
-4. **TypeScript defs** — update `src/index.d.ts` (copied to `lib/index.d.ts` on transpile) when props or exports change
-5. **Manual check** — run `npm start` and verify affected demos in the browser
+3. **`npm run test:visual`** — when demo grid or shader output changes (update snapshots if intentional)
+4. **`npm run changelog`** — when bumping `package.json` version
+5. **TypeScript defs** — update `src/index.d.ts` (copied to `lib/index.d.ts` on transpile) when props or exports change
+6. **Manual check** — run `npm start` and verify affected demos in the browser
 
 ## PR checklist
 
 - [ ] Scope matches an open issue or roadmap item (or explain why not)
 - [ ] `npm run transpile` passes; `lib/` updated if `src/` changed
 - [ ] `npm run build` passes if examples changed
+- [ ] `npm run test:visual` passes (or snapshots updated with `npm run test:visual:update`)
 - [ ] `lib/index.d.ts` reflects any public API changes
 - [ ] Docs updated when behavior or props change
 - [ ] No unrelated drive-by refactors

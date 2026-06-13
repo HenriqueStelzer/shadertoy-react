@@ -57,6 +57,8 @@ Media tracks are stopped on texture dispose / unmount.
 
 Optional: `wrapS`, `wrapT`, `minFilter`, `magFilter`, `flipY`.
 
+**`flipY`** — When omitted (default), image and video uploads use `UNPACK_FLIP_Y_WEBGL` so `fragCoord`-based UVs match Shadertoy. Pass `flipY: false` or `flipY: 0` to disable the flip. If a texture still looks upside down (some WebGL hosts or older npm builds), try `flipY: 1` explicitly on the texture entry.
+
 ## Cube map
 
 ```javascript

@@ -47,13 +47,18 @@ Public backlog for **glsl-helpers-react**, organized in **phases** (P0–P5). **
 | [2.1.0](changelog/2.1.0.md) | [Demo grid scroll discoverability](#demo-grid-scroll-discoverability) | Done |
 | [2.1.1](changelog/2.1.1.md) | [README badges and Playground section](#readme-badges-and-playground) | Done |
 | [2.1.1](changelog/2.1.1.md) | [Examples refactor (TSX + `.frag`)](#examples-refactor-tsx--frag) | Done |
-| [2.1.1](changelog/2.1.1.md) | [CodeSandbox playground (like upstream)](#codesandbox-playground-like-upstream) | Done |
-| [2.1.1](changelog/2.1.1.md) | [GitHub Pages demo deploy](#github-pages-demo-deploy) | Done |
-| `2.1.2` | [Visual regression for examples](#visual-regression-for-examples) | Planned |
+| [2.1.1](changelog/2.1.1.md) | [StackBlitz playground](#stackblitz-playground) | Done |
+| [2.1.1](changelog/2.1.1.md) | [Three-tier demo model in README](#three-tier-demo-model) | Done |
+| [2.1.1](changelog/2.1.1.md) | [GitHub Pages demo deploy](#github-pages-demo-deploy) | Partial |
+| [2.1.2](changelog/2.1.2.md) | [Library render fixes (2.1.2)](#library-render-fixes-212) | Partial |
+| [2.1.2](changelog/2.1.2.md) | [Visual regression for examples](#visual-regression-for-examples) | Partial |
+| [2.1.2](changelog/2.1.2.md) | [Demo sandbox (upstream CodeSandbox layout)](#demo-sandbox-upstream-codesandbox-layout) | Done |
+| [2.1.2](changelog/2.1.2.md) | [StackBlitz demo-sandbox import fix](#stackblitz-demo-sandbox-import-fix) | Done |
+| `2.1.2` | [Release 2.1.2 (merge + publish)](#release-212) | Partial |
+| `2.1.4` | [CI on pull requests](#ci-on-pull-requests) | Partial |
 | `2.1.3` | [SECURITY.md](#securitymd) | Planned |
 | `2.1.3` | [Deprecate `shadertoy-react-19` on npm](#deprecate-shadertoy-react-19-on-npm) | Planned |
 | `2.1.3` | [ESM `exports` map](#esm-exports-map) | Planned |
-| `2.1.4` | [CI on pull requests](#ci-on-pull-requests) | Planned |
 | `2.1.4` | [Dependabot](#dependabot) | Planned |
 | `2.1.4` | [Automated tests](#automated-tests) | Planned |
 | `2.1.5` | [Framework cookbooks](#framework-cookbooks) | Planned |
@@ -227,23 +232,57 @@ Public backlog for **glsl-helpers-react**, organized in **phases** (P0–P5). **
 
 ## `2.1.x` (P1) — Demos, discoverability, and developer experience
 
-Large release **`2.1.0`** opens the line; patches group work below. **Demos first**, then hygiene, tooling, and docs.
+**Line status (2026-06-09):** `2.1.0` and `2.1.1` merged to `main` via [PR #10](https://github.com/HenriqueStelzer/glsl-helpers-react/pull/10). Sandbox tier work is on **`test/sandbox-playground`** (6 commits ahead of `main`; 2 commits not yet on `origin/test/sandbox-playground`). **`2.1.2` library fixes, Playwright CI, and changelog are in the local working tree only** — not committed on any branch yet. [`feature/2.1.x`](https://github.com/HenriqueStelzer/glsl-helpers-react/tree/feature/2.1.x) is merged; branch tip is stale.
+
+| Version | Branch / location | Merged to `main` | npm publish | GitHub Pages |
+|---------|-------------------|------------------|-------------|--------------|
+| **2.1.0** | `main` | Yes (PR #10) | Pending | Bundled in live demo |
+| **2.1.1** | `main` (`package.json` **2.1.1**) | Yes (PR #10) | Pending | **Live** — `origin/gh-pages` `bundle.js` hash matches `main:examples/dist/bundle.js` |
+| **2.1.2** | Uncommitted working tree + docs on `test/sandbox-playground` | No | Pending | Not deployed — rebuild needed after lib commit + `publish-demo` |
+
+### Branch divergence
+
+| Branch | Tip (local) | vs `main` | Notes |
+|--------|-------------|-----------|--------|
+| **`main`** | `be8374d` — merge PR #10 | — | Examples refactor, scroll UX, `iMouse` fix; `sandbox/basic` + `sandbox/demos` (pre-rename) |
+| **`feature/2.1.x`** | `ea66a43` | Behind `main` (merged) | Safe to delete after hygiene pass |
+| **`test/sandbox-playground`** | `e865be9` | **+6 commits** (sandbox/README/roadmap only) | Playground + demo-sandbox router, StackBlitz vite fix; **no `src/` commits yet** |
+| **`origin/gh-pages`** | `6354825` | Unrelated history | Deploy branch: `bundle.js` + `index.html` at repo root; bundle **identical** to `main` examples build (2.1.1) |
+
+**Uncommitted local work (not on any branch):** `src/index.jsx`, `src/Texture.js` (ResizeObserver, `toGlFlipY`, texture compile deferral, multi-pass `iChannel` injection), `package.json` **2.1.2**, Playwright (`playwright.config.ts`, `tests/visual/`), `.github/workflows/ci.yml`, `docs/changelog/2.1.2.md`, rebuilt `examples/dist/`, `docs/textures.md`. Commit these before merge or npm publish.
+
+**StackBlitz / upside-down textures:** Demo sandbox resolves `glsl-helpers-react` from **npm** (`^2.1.0`). Texture orientation and canvas sizing fixes exist only in the uncommitted working tree — StackBlitz `/Textures` and live GitHub Pages will stay upside-down or black until **2.1.2** is committed, transpiled, published to npm, and (for Pages) `npm run publish-demo`.
+
+### Three-tier demo model
+
+The fork documents three distinct demo surfaces. **Our README links use StackBlitz only**; upstream CodeSandbox URLs are attribution references for the original [shadertoy-react](https://github.com/mvilledieu/shadertoy-react) experience.
+
+| Tier | Location | Structure | Try it |
+|------|----------|-----------|--------|
+| **Playground** | [`sandbox/playground`](../sandbox/playground/) | Single annotated `.frag`, minimal `GlslCanvas` | [StackBlitz](https://stackblitz.com/github/HenriqueStelzer/glsl-helpers-react/tree/test/sandbox-playground/sandbox/playground) |
+| **Demo sandbox** | [`sandbox/demo-sandbox`](../sandbox/demo-sandbox/) | Fullscreen one shader per route; **+ More** dropdown; React Router — matches [upstream CodeSandbox Demos](https://codesandbox.io/s/434qm4x4w0) | [StackBlitz](https://stackblitz.com/github/HenriqueStelzer/glsl-helpers-react/tree/test/sandbox-playground/sandbox/demo-sandbox) |
+| **Demo** | [`examples/`](../examples/) → GitHub Pages | **15-tile** scrolling grid + JumpNav + scroll cue — expanded from [upstream `examples/`](https://github.com/mvilledieu/shadertoy-react/tree/master/examples) | [Live demo](https://henriquestelzer.github.io/glsl-helpers-react/) · `npm start` |
+
+**StackBlitz branch note:** Until `test/sandbox-playground` merges to `main`, StackBlitz URLs must use `tree/test/sandbox-playground/sandbox/…`. After merge, switch README links to `tree/main/sandbox/…`.
+
+---
 
 ### `2.1.0` — Demo fixes
+
+**Status:** Done — merged to `main` ([changelog/2.1.0.md](changelog/2.1.0.md)).
 
 #### Demo mouse, scaling, and upside-down output
 
 **Goal:** Fix incorrect `iMouse` coordinates, canvas scaling, and flipped/upside-down rendering in the example demos.
 
-**Why:** Mouse-driven examples (e.g. `mouse.js`) report wrong positions when the canvas is CSS-scaled, offset from the viewport origin, or affected by `devicePixelRatio`. Some demos also appear upside down or vertically flipped — unclear whether that is an accidental Y-axis / `fragCoord` mismatch or intentional; either way it confuses users comparing against Shadertoy and breaks trust in the demo grid.
+**Why:** Mouse-driven examples report wrong positions when the canvas is CSS-scaled, offset from the viewport origin, or affected by `devicePixelRatio`.
 
 **Deliverables**
 
-- Correct mouse coordinate mapping: CSS layout size vs backing-store size vs `devicePixelRatio`
-- Account for canvas offset within the page (scroll, nested layout, non-zero `getBoundingClientRect`)
-- Audit Y-axis convention (`fragCoord`, `uv`, texture sampling) across demos; fix accidental flips or document intentional ones
-- Verify mouse and orientation-sensitive demos at multiple DPR values and window sizes
-- Cross-check against [troubleshooting](troubleshooting.md) if uniform or coordinate docs need updating
+- [x] Correct mouse coordinate mapping: backing-store pixels (`CSS × devicePixelRatio`), matching `iResolution`
+- [x] `toShaderPixelCoords()` helper in `GlslCanvas`
+- [x] Verify mouse demos at multiple DPR values
+- [x] [uniforms.md](uniforms.md) and [troubleshooting.md](troubleshooting.md) updated
 
 **Depends on:** None
 
@@ -253,13 +292,11 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 **Goal:** Make it obvious that the local demo grid scrolls and contains more than one viewport of examples.
 
-**Why:** The 3×N tile layout extends below the fold with no scroll hint (fade, sticky nav, “scroll for more” cue, or similar). First-time visitors assume the page ends at the first row and miss most demos.
-
 **Deliverables**
 
-- Visual affordance that content continues below the fold (e.g. gradient fade, scroll indicator, or compact index)
-- Optional: anchor links / jump menu to each demo tile
-- Verify on mobile and short viewports where the problem is worse
+- [x] Bottom gradient fade and “scroll for more demos” cue
+- [x] Sticky jump menu with anchor links per tile (`#demo-*`)
+- [x] Verify on mobile and short viewports
 
 **Depends on:** None
 
@@ -267,20 +304,19 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 ### `2.1.1` — Demo platform
 
+**Status:** Done — merged to `main` ([changelog/2.1.1.md](changelog/2.1.1.md)).
+
 #### README badges and Playground section
 
-**Goal:** README header matches upstream polish — npm/size badges plus one-click links to key docs.
-
-**Status:** Done — badges and Playground links shipped in `2.1.1`.
+**Goal:** README header matches upstream polish — npm/size badges plus one-click links to key docs and sandboxes.
 
 **Deliverables**
 
-- [x] npm version + gzip bundle size badges (like upstream)
-- [x] Shield badges for [roadmap](roadmap.md), [changelog](changelog/README.md), [migration-2.0](migration-2.0.md), [textures](textures.md), [multi-pass](multi-pass.md), [uniforms](uniforms.md), [troubleshooting](troubleshooting.md)
-- [x] Playground section with live CodeSandbox URLs once sandboxes exist
-- [x] CONTRIBUTING / ISSUES badges when those files land (`2.0.1`)
+- [x] npm version + gzip bundle size badges
+- [x] Shield badges for roadmap, changelog, migration, textures, multi-pass, uniforms, troubleshooting, CONTRIBUTING, ISSUES
+- [x] Playground, Demo, and Demo sandbox sections with StackBlitz links
 
-**Depends on:** CodeSandbox playground for live Playground links
+**Depends on:** [StackBlitz playground](#stackblitz-playground)
 
 ---
 
@@ -288,37 +324,45 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 **Goal:** Split inline shader strings into maintainable `.frag` files and TypeScript/React tile components.
 
-**Status:** Done — `2.1.1`.
-
 **Deliverables**
 
 - [x] One `.frag` file per demo shader under `examples/src/shaders/`
 - [x] TypeScript tile components (`examples/src/tiles/`) importing frag via webpack `asset/source`
 - [x] Migrate `examples/src/index.jsx` → `index.tsx`
 - [x] Webpack/babel TypeScript + `.frag` imports
-- [x] Sandboxes can copy the same import pattern
 
 **Depends on:** None
 
 ---
 
-#### CodeSandbox playground (like upstream)
+#### StackBlitz playground
 
-**Goal:** Live CodeSandbox templates matching upstream’s “try it now” experience.
+**Goal:** Live browser sandboxes matching upstream’s “try it now” experience — **StackBlitz only** in our docs (no fork CodeSandbox links).
 
-**Why:** [mvilledieu/shadertoy-react](https://github.com/mvilledieu/shadertoy-react) README linked to live sandboxes ([Basic](https://codesandbox.io/s/ojllzxvww6), [Demos](https://codesandbox.io/s/434qm4x4w0)); fork README has no Playground links yet.
+**Why:** [mvilledieu/shadertoy-react](https://github.com/mvilledieu/shadertoy-react) README linked to live CodeSandbox templates ([Basic](https://codesandbox.io/s/ojllzxvww6), [Demos](https://codesandbox.io/s/434qm4x4w0)); the fork mirrors that UX via StackBlitz + Vite sandboxes.
 
-**Status:** Done — `sandbox/basic` and `sandbox/demos` (Vite); README Playground links.
+**Status:** Done — [`sandbox/playground`](../sandbox/playground/) shipped in `2.1.1`; demo-sandbox router layout landed in `2.1.2` on `test/sandbox-playground`.
 
 **Deliverables**
 
-- [x] **Basic** sandbox — minimal fullscreen `GlslCanvas` + one shader
-- [x] **Demos** sandbox — textures, mouse, multi-pass subset
-- [x] Uses `glsl-helpers-react` + `GlslCanvas` (not legacy package name)
-- [x] README [Playground](../README.md#playground) section with live links
-- [ ] StackBlitz mirrors (optional; deferred)
+- [x] **Playground** — minimal fullscreen `GlslCanvas` + one annotated `.frag`
+- [x] README [Playground](../README.md#playground) section with StackBlitz link
+- [x] Vite + `glsl-helpers-react` from npm (`^2.1.0`)
 
 **Depends on:** [Examples refactor (TSX + `.frag`)](#examples-refactor-tsx--frag) (recommended)
+
+---
+
+#### Three-tier demo model
+
+**Goal:** README clearly separates Playground, Demo sandbox, and Demo (15-tile grid).
+
+**Deliverables**
+
+- [x] Three README sections with badges and StackBlitz / GitHub Pages links
+- [x] Upstream CodeSandbox / `examples/` cited as attribution only
+
+**Depends on:** [StackBlitz playground](#stackblitz-playground), [Demo sandbox](#demo-sandbox-upstream-codesandbox-layout)
 
 ---
 
@@ -326,21 +370,43 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 **Goal:** Live demo at `homepage` URL.
 
-**Why:** `package.json` `homepage` points at the fork; verify `npm run publish-demo` after 2.0 rebrand.
-
-**Status:** Done — `homepage` URL set; CONTRIBUTING documents deploy. Run `npm run publish-demo` locally to push `gh-pages`.
+**Status:** Partial — site is **live and matches `main`** (`origin/gh-pages` `bundle.js` ≡ `main:examples/dist/bundle.js`, 2.1.1 build). Still missing **2.1.2** library fixes (texture `flipY`, ResizeObserver, multi-pass channels) until working-tree `src/` changes are committed, transpiled, examples rebuilt, and `publish-demo` run.
 
 **Deliverables**
 
 - [x] `package.json` `homepage` → GitHub Pages URL
 - [x] Document deploy steps in CONTRIBUTING.md
-- [ ] Push updated `examples/dist` to `gh-pages` (requires local git credentials)
+- [x] Initial deploy to `origin/gh-pages` (live at [henriquestelzer.github.io/glsl-helpers-react](https://henriquestelzer.github.io/glsl-helpers-react/))
+- [ ] Commit + merge `2.1.2` library fixes; `npm run transpile` + `npm run build`
+- [ ] Push updated `examples/dist` to `gh-pages` (`npm run publish-demo`)
+- [ ] Re-deploy after `2.1.2` npm publish so StackBlitz sandboxes pick up texture / canvas fixes
 
-**Depends on:** Demo fixes (`2.1.0`) recommended before promoting live demo
+**Depends on:** [Release 2.1.2](#release-212)
 
 ---
 
-### `2.1.2` — Demo quality
+### `2.1.2` — Demo quality and render fixes
+
+**Status:** **In progress** — sandbox tier committed on `test/sandbox-playground`; library fixes, Playwright, and CI exist in the **local working tree only** (uncommitted). See [changelog/2.1.2.md](changelog/2.1.2.md). Pending commit, merge to `main`, and npm publish.
+
+#### Library render fixes (2.1.2)
+
+**Goal:** Fix canvas sizing, mouse coords, texture orientation, and multi-pass compile errors discovered during visual QA.
+
+**Deliverables**
+
+- [ ] Commit to branch: `syncCanvasSize()` + `ResizeObserver` — backing store tracks CSS layout × `devicePixelRatio`
+- [ ] Commit to branch: `toShaderPixelCoords()` — mouse uses canvas width/height vs layout rect (not DPR alone)
+- [ ] Commit to branch: defer shader compile when `textures.length > 0` until load completes
+- [ ] Commit to branch: `toGlFlipY()` in `Texture.js` — correct upside-down image textures (fixes demo-sandbox `/Textures` on npm)
+- [ ] Commit to branch: multi-pass inject `sampler2D iChannelN` for pass `inputs` (fixes final-pass compile errors)
+- [x] [textures.md](textures.md) — `flipY` behavior documented (local edit)
+
+**Note:** Code is implemented locally; checkboxes above track **git commit**, not authorship. StackBlitz sandboxes resolve `glsl-helpers-react` from **npm** until **`2.1.2` is published**. Local monorepo dev: `LOCAL_GLSL_LIB=1 npm run dev` in `sandbox/demo-sandbox` after `npm run transpile`.
+
+**Depends on:** None
+
+---
 
 #### Visual regression for examples
 
@@ -348,10 +414,70 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 **Deliverables**
 
-- Playwright screenshots per example tile
-- Tolerance for cross-GPU variance or skip in CI
+- [ ] Commit to branch: Playwright config (`playwright.config.ts`) — serves `examples/dist` on `:3001`, viewport 1440×900
+- [ ] Commit to branch: per-tile snapshots (`tests/visual/demo-grid.spec.ts`, 15 tiles + scroll cue + canvas backing-store check)
+- [ ] Commit to branch: tolerance map for animated tiles (`tests/visual/demo-links.ts`)
+- [x] `.cursor/skills/visual-regression/` skill and `demo-visual-qa` rule
+- [ ] Commit to branch: `.github/workflows/ci.yml` (runs on `main` / PR only — add `test/sandbox-playground` until merge)
+- [ ] Stabilize flaky `demo-basic` tile (animated raymarcher at page bottom; black canvas vs rendered frame) — helpers added (`scrollIntoViewIfNeeded`, `waitForCanvasPixels`); full green CI run not confirmed
 
-**Depends on:** [CI on pull requests](#ci-on-pull-requests); stable demo grid after `2.1.0`–`2.1.1`
+**Depends on:** Stable demo grid after `2.1.0`–`2.1.1`
+
+---
+
+#### Demo sandbox (upstream CodeSandbox layout)
+
+**Goal:** Fullscreen one-shader-per-route demo with **+ More** nav, matching [upstream shadertoy-react CodeSandbox](https://codesandbox.io/s/434qm4x4w0).
+
+**Deliverables**
+
+- [x] [`sandbox/demo-sandbox`](../sandbox/demo-sandbox/) — React Router routes, grouped **+ More** dropdown (Component Props / Built-ins Uniforms)
+- [x] One `GlslCanvas` per route: Basic, Textures, Custom Uniforms, iResolution, iMouse, iDate, iFrame, iChannelResolution, iDeviceOrientation
+- [x] Fullscreen shell (`index.html` `height: 100%`; menu conditionally rendered for a11y)
+- [x] StackBlitz link in README and sandbox README
+
+**Note:** GitHub Pages grid (`examples/`) remains the 15-tile showcase; demo-sandbox is the upstream-style router playground.
+
+**Depends on:** [Examples refactor (TSX + `.frag`)](#examples-refactor-tsx--frag)
+
+---
+
+#### StackBlitz demo-sandbox import fix
+
+**Goal:** `npm run dev` on StackBlitz resolves `glsl-helpers-react` from npm, not a broken `../../lib/` alias.
+
+**Why:** StackBlitz uses only `sandbox/demo-sandbox` as project root; a dev-only Vite alias to `../../lib/glsl-helpers-react.min.js` resolved to `/home/lib/…` and broke imports.
+
+**Deliverables**
+
+- [x] Remove default Vite alias; match `sandbox/playground` (npm resolution)
+- [x] Opt-in local lib via `LOCAL_GLSL_LIB=1` after `npm run transpile` at repo root
+- [x] Document in [`sandbox/demo-sandbox/README.md`](../sandbox/demo-sandbox/README.md)
+
+**Depends on:** [Demo sandbox](#demo-sandbox-upstream-codesandbox-layout)
+
+---
+
+### Release 2.1.2
+
+**Goal:** Ship `glsl-helpers-react@2.1.2` with render fixes, visual regression CI, and sandbox tier complete.
+
+**Status:** Partial — sandbox tier on `test/sandbox-playground`; library + CI + changelog in **uncommitted working tree**; not merged; not published.
+
+**Version log:** [changelog/2.1.2.md](changelog/2.1.2.md) (local file) · [full index](changelog/README.md)
+
+**Deliverables**
+
+- [ ] Commit working tree: `src/` fixes + `npm run transpile` + `lib/`
+- [ ] Commit working tree: Playwright tests + `.github/workflows/ci.yml` + `package.json` 2.1.2
+- [x] Demo-sandbox router layout + StackBlitz import fix (on `test/sandbox-playground`)
+- [x] `docs/changelog/2.1.2.md` drafted (local)
+- [ ] Push `test/sandbox-playground` (2 commits ahead of `origin`)
+- [ ] Merge `test/sandbox-playground` → `main`
+- [ ] Update StackBlitz README links from `test/sandbox-playground` → `main`
+- [ ] `npm run changelog` (regenerate after commits)
+- [ ] `npm run publish-demo` (refresh GitHub Pages with 2.1.2 lib)
+- [ ] `npm publish` as `glsl-helpers-react@2.1.2`
 
 ---
 
@@ -401,14 +527,17 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 **Goal:** Catch broken builds before merge.
 
-**Why:** No `.github/workflows/` today; `npm test` is a stub.
+**Status:** Partial — `.github/workflows/ci.yml` drafted locally (uncommitted); runs `npm ci`, transpile, build examples, and Playwright visual tests on push/PR to `main`; Dependabot and changelog-dirty check still open. **Note:** workflow and tests are not on `main` until committed; `test/sandbox-playground` is not in the workflow `branches` list until merged.
 
 **Deliverables**
 
-- GitHub Actions: `npm ci`, `npm run transpile`, `npm run build`
-- Optional: fail if `npm run changelog` produces a dirty tree when version bumps change
+- [ ] Commit `.github/workflows/ci.yml` to branch
+- [ ] GitHub Actions: `npm ci`, `npm run transpile`, `npm run build`, `npm run test:visual`
+- [ ] Playwright Chromium install in CI (`npx playwright install --with-deps chromium`)
+- [ ] Stabilize `demo-basic` visual test flake
+- [ ] Optional: fail if `npm run changelog` produces a dirty tree when version bumps change
 
-**Depends on:** None
+**Depends on:** [Visual regression for examples](#visual-regression-for-examples)
 
 ---
 
@@ -602,4 +731,4 @@ Large release **`2.1.0`** opens the line; patches group work below. **Demos firs
 
 ---
 
-*Last updated: 2026-06-09. P0–P2 → `2.x` minors; P3–P5 → majors `3.0.0`, `4.0.0`, `5.0.0`. Done rows link version logs in the summary table.*
+*Last updated: 2026-06-09 (branch diff review). P0–P2 → `2.x` minors; P3–P5 → majors `3.0.0`, `4.0.0`, `5.0.0`. `2.1.0`–`2.1.1` on `main` + live on `gh-pages`; `2.1.2` sandbox commits on `test/sandbox-playground`; lib/CI/tests uncommitted locally.*

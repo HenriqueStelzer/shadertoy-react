@@ -11,5 +11,5 @@
     "skipLibCheck": true,
     "esModuleInterop": true
   },
-  "include": ["examples/src/**/*", "src/**/*"]
+  "include": ["examples/src/**/*", "src/**/*", "tests/**/*", "playwright.config.ts"]
 }
