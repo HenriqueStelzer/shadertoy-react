@@ -9,7 +9,7 @@ export default defineConfig({
   reporter: "list",
   use: {
     baseURL: "http://localhost:3001",
-    viewport: { width: 1440, height: 900 },
+    viewport: { width: 1280, height: 720 },
     deviceScaleFactor: 1,
   },
   expect: {
@@ -26,7 +26,12 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        // Match root viewport — `Desktop Chrome` defaults to 1280×720 and overrides root `use`.
+        viewport: { width: 1280, height: 720 },
+        deviceScaleFactor: 1,
+      },
     },
   ],
 });

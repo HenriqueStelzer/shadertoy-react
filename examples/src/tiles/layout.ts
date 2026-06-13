@@ -44,10 +44,22 @@ export const Page = styled.div`
   position: relative;
 `;
 
-export const Container = styled.div`
+export const Container = styled.div<{ $solo?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+
+  /* Playwright solo mode: one tile must not flex-grow to full row width. */
+  ${(props) =>
+    props.$solo &&
+    `
+    & > * {
+      flex-grow: 0;
+      flex-shrink: 0;
+      width: calc(100vw / 3);
+      height: calc(100vh / 3);
+    }
+  `}
 `;
 
 export const Parent = styled.div`

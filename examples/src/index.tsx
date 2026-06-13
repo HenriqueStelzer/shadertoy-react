@@ -98,7 +98,7 @@ class App extends Component<object, AppState> {
             <ScrollCue $visible={showScrollCue}>Scroll for more demos ↓</ScrollCue>
           </>
         )}
-        <Container>
+        <Container $solo={!!solo}>
           {isTileVisible("demo-image-fade") && (
             <ImageFadeTile
               textureUrl={textureUrl}

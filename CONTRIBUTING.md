@@ -69,7 +69,7 @@ npm run test:visual               # compare against baselines
 npm run test:visual:update        # refresh snapshots after intentional visual changes
 ```
 
-- Fixed viewport: **1440×900**, `deviceScaleFactor: 1`
+- Fixed viewport: **1280×720**, `deviceScaleFactor: 1` (tile screenshots ≈ 427×240, one-third of viewport)
 - Per-tile tests use `/?solo=demo-*` (one WebGL context each; full grid still used for scroll/backing-store tests)
 - Animated tiles (`clock`, `custom uniforms`, `mouse`, etc.) use higher pixel-diff tolerance
 - **`demo-camera`** is skipped unless `PLAYWRIGHT_CAMERA=1` (requires `getUserMedia` permission)
