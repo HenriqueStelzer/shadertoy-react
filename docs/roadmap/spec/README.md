@@ -13,8 +13,8 @@ See [EXECUTION.md](./EXECUTION.md) for multitask worktree setup and merge protoc
 | Prio | File | Version | Status | Paired review |
 |------|------|---------|--------|---------------|
 | 01 | [delete-stale-remote-branches](implementation/01.delete-stale-remote-branches.2.0.1.md) | 2.0.1 | partial | [review](review/01.delete-stale-remote-branches.2.0.1.md) |
-| 02 | [library-render-fixes](implementation/02.library-render-fixes.2.1.2.md) | 2.1.2 | partial | [review](review/02.library-render-fixes.2.1.2.md) |
-| 03 | [visual-regression-for-examples](implementation/03.visual-regression-for-examples.2.1.2.md) | 2.1.2 | partial | [review](review/03.visual-regression-for-examples.2.1.2.md) |
+| 02 | [library-render-fixes](implementation/02.library-render-fixes.2.1.2.md) | 2.1.2 | done | [review](review/02.library-render-fixes.2.1.2.md) |
+| 03 | [visual-regression-for-examples](implementation/03.visual-regression-for-examples.2.1.2.md) | 2.1.2 | done | [review](review/03.visual-regression-for-examples.2.1.2.md) |
 | 04 | [release](implementation/04.release.2.1.2.md) | 2.1.2 | partial | [review](review/04.release.2.1.2.md) |
 | 05 | [github-pages-demo-deploy](implementation/05.github-pages-demo-deploy.2.1.1.md) | 2.1.1 | partial | [review](review/05.github-pages-demo-deploy.2.1.1.md) |
 | 06 | [ci-on-pull-requests](implementation/06.ci-on-pull-requests.2.1.4.md) | 2.1.4 | partial | [review](review/06.ci-on-pull-requests.2.1.4.md) |
@@ -40,7 +40,7 @@ Same 19 files as paired column above, under `review/{prio}.{slug}.{version}.md`.
 
 | Prio | File | Version | Tag |
 |------|------|---------|-----|
-| 01 | [changelog 2.1.2](review/01.changelog.2.1.2.md) | 2.1.2 | pending |
+| 01 | [changelog 2.1.2](review/01.changelog.2.1.2.md) | 2.1.2 | pending merge/publish |
 | 02 | [changelog 2.1.1](review/02.changelog.2.1.1.md) | 2.1.1 | v2.1.1 |
 | 03 | [changelog 2.1.0](review/03.changelog.2.1.0.md) | 2.1.0 | v2.1.0 |
 | 04 | [changelog 2.0.1](review/04.changelog.2.0.1.md) | 2.0.1 | pending |

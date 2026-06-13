@@ -5,6 +5,7 @@
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/MIT)
 
 [![roadmap](https://img.shields.io/badge/docs-roadmap-0969da)](docs/roadmap.md)
+[![roadmap specs](https://img.shields.io/badge/docs-roadmap%20specs-0969da)](docs/roadmap/spec/README.md)
 [![changelog](https://img.shields.io/badge/docs-changelog-0969da)](docs/changelog/README.md)
 [![migration 2.0](https://img.shields.io/badge/docs-migration%202.0-0969da)](docs/migration-2.0.md)
 [![textures](https://img.shields.io/badge/docs-textures-0969da)](docs/textures.md)
@@ -40,6 +41,7 @@
 - [Contributing](CONTRIBUTING.md)
 - [Reporting issues](ISSUES.md)
 - [Roadmap](docs/roadmap.md)
+- [Roadmap specs (implementation + review)](docs/roadmap/spec/README.md)
 - [Changelog](docs/changelog/README.md)
 - [Migration guide (2.0)](docs/migration-2.0.md)
 - [Textures](docs/textures.md)
@@ -239,6 +241,10 @@ A full-viewport quad is rendered with WebGL. Canvas size follows the parent elem
 
 ## Roadmap status
 
+**Current line:** `2.1.2` on [`test/sandbox-playground`](https://github.com/HenriqueStelzer/glsl-helpers-react/tree/test/sandbox-playground) — pending merge to `main` and npm publish. Full backlog: [roadmap](docs/roadmap.md) · [spec index](docs/roadmap/spec/README.md).
+
+### Shipped (2.x)
+
 | Feature | Status |
 |---|---|
 | Module / props IntelliSense | Done (2.x) |
@@ -253,6 +259,23 @@ A full-viewport quad is rendered with WebGL. Canvas size follows the parent elem
 | Cube texture | Done (2.x) |
 | Multi-pass rendering | Done (2.x) |
 | Persistent time (`iPersistentTime`) | Done (2.x) |
+| Demo grid scroll UX + jump nav | Done (2.1.0) |
+| Three-tier demos (playground / sandbox / grid) | Done (2.1.1–2.1.2) |
+| Canvas sizing + texture `flipY` + multi-pass channels | Done (2.1.2, branch) |
+| Playwright visual regression CI | Done (2.1.2, branch) |
+
+### Next
+
+| Version | Feature | Review spec |
+|---|---|---|
+| `2.1.2` | Release merge + npm + GitHub Pages | [release review](docs/roadmap/spec/review/04.release.2.1.2.md) · [changelog 2.1.2](docs/roadmap/spec/review/01.changelog.2.1.2.md) |
+| `2.1.3` | `SECURITY.md` | [review](docs/roadmap/spec/review/10.securitymd.2.1.3.md) |
+| `2.1.3` | Deprecate `shadertoy-react-19` on npm | [review](docs/roadmap/spec/review/11.deprecate-shadertoy-react-19.2.1.3.md) |
+| `2.1.3` | ESM `exports` map | [review](docs/roadmap/spec/review/12.esm-exports-map.2.1.3.md) |
+| `2.1.4` | Dependabot + changelog CI guard | [Dependabot review](docs/roadmap/spec/review/13.dependabot.2.1.4.md) |
+| `2.1.4` | Unit tests (shader preprocessor) | [review](docs/roadmap/spec/review/14.automated-tests.2.1.4.md) |
+| `2.1.5` | Framework cookbooks (Next/Vite/Remix) | [review](docs/roadmap/spec/review/15.framework-cookbooks.2.1.5.md) |
+| `2.2.0` | Framework-agnostic core | [review](docs/roadmap/spec/review/30.framework-agnostic-core.2.2.0.md) |
 
 ## License
 
